@@ -1,13 +1,13 @@
-# Voby Simple Router
+# Woby Simple Router
 
-A simple isomorphic router for [Voby](https://github.com/vobyjs/woby).
+A simple isomorphic router for [Woby](https://github.com/wongchichong/woby).
 
 Heavily inspired by [solid-router](https://github.com/solidjs/solid-router). For a more direct port of that check out [voby-router](https://github.com/vobyjs/woby-router).
 
 ## Install
 
 ```sh
-npm install --save voby-simple-router
+pnpm install --save woby-simple-router
 ```
 
 ## APIs
