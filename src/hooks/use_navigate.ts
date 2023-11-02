@@ -1,17 +1,17 @@
 
 /* IMPORT */
 
-import useState from '~/hooks/use_state';
-import type {RouterNavigate} from '~/types';
+import useState from '../hooks/use_state'
+import type { RouterNavigate } from '../types'
 
 /* MAIN */
 
 const useNavigate = (): RouterNavigate => {
 
-  return useState ().navigate;
+    return useState().navigate
 
-};
+}
 
 /* EXPORT */
 
-export default useNavigate;
+export default useNavigate

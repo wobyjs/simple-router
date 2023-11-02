@@ -1,21 +1,22 @@
 
 /* IMPORT */
 
-import type {FunctionMaybe, Observable, ObservableReadonly, Resource} from 'voby';
+import type { JSX } from 'woby'
+import type { FunctionMaybe, Observable, ObservableReadonly, Resource } from 'woby'
 
 /* HELPERS */
 
-type F<T> = FunctionMaybe<T>;
+type F<T> = FunctionMaybe<T>
 
-type O<T> = Observable<T>;
+type O<T> = Observable<T>
 
-type OR<T> = ObservableReadonly<T>;
+type OR<T> = ObservableReadonly<T>
 
 /* MAIN */
 
-type RouterBackend = 'hash' | 'memory' | 'path';
+type RouterBackend = 'hash' | 'memory' | 'path'
 
-type RouterLoader<T> = ( ctx: RouterLoaderContext ) => Promise<T>;
+type RouterLoader<T> = (ctx: RouterLoaderContext) => Promise<T>
 
 type RouterLoaderContext = {
   pathname: RouterPath,
@@ -24,35 +25,35 @@ type RouterLoaderContext = {
   params: RouterParams,
   searchParams: URLSearchParams,
   route: RouterRoute
-};
+}
 
 type RouterLocation = {
   pathname: OR<RouterPath>,
   search: OR<string>,
   hash: OR<string>
-};
+}
 
-type RouterNavigate = ( path: RouterPath, options?: RouterNavigateOptions ) => void;
+type RouterNavigate = (path: RouterPath, options?: RouterNavigateOptions) => void
 
 type RouterNavigateOptions = {
   replace?: boolean,
   state?: any
-};
+}
 
-type RouterParams = Record<string, string | undefined>;
+type RouterParams = Record<string, string | undefined>
 
-type RouterPath = `/${string}`;
+type RouterPath = `/${string}`
 
 type RouterRoute = {
   path: string,
   to: JSX.Child,
   loader?: RouterLoader<unknown>,
   children?: RouterRoute[]
-};
+}
 
 type RouterRouter = {
-  route ( path: string ): { params: RouterParams, route: RouterRoute } | undefined
-};
+  route(path: string): { params: RouterParams, route: RouterRoute } | undefined
+}
 
 type RouterState = {
   pathname: OR<RouterPath>,
@@ -63,9 +64,9 @@ type RouterState = {
   searchParams: OR<URLSearchParams>,
   route: OR<RouterRoute>,
   loader: OR<Resource<any>>
-};
+}
 
 /* EXPORT */
 
-export type {F, O, OR, Resource};
-export type {RouterBackend, RouterLoader, RouterLoaderContext, RouterLocation, RouterNavigate, RouterNavigateOptions, RouterParams, RouterPath, RouterRoute, RouterRouter, RouterState};
+export type { F, O, OR, Resource }
+export type { RouterBackend, RouterLoader, RouterLoaderContext, RouterLocation, RouterNavigate, RouterNavigateOptions, RouterParams, RouterPath, RouterRoute, RouterRouter, RouterState }

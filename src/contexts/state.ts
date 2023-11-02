@@ -1,13 +1,13 @@
 
 /* IMPORT */
 
-import {createContext} from 'voby';
-import type {RouterState} from '~/types';
+import { createContext } from 'woby'
+import type { RouterState } from '../types'
 
 /* MAIN */
 
-const State = createContext<RouterState> ();
+const State = createContext<RouterState>()
 
 /* EXPORT */
 
-export default State;
+export default State

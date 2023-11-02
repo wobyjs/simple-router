@@ -1,22 +1,22 @@
 
 /* IMPORT */
 
-import {useContext} from 'voby';
-import State from '~/contexts/state';
-import type {RouterState} from '~/types';
+import { useContext } from 'woby'
+import State from '../contexts/state'
+import type { RouterState } from '../types'
 
 /* MAIN */
 
 const useState = (): RouterState => {
 
-  const state = useContext ( State );
+    const state = useContext(State)
 
-  if ( !state ) throw new Error ( 'Router context not found' );
+    if (!state) throw new Error('Router context not found')
 
-  return state;
+    return state
 
-};
+}
 
 /* EXPORT */
 
-export default useState;
+export default useState

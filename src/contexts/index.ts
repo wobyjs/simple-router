@@ -1,8 +1,8 @@
 
 /* IMPORT */
 
-import State from '~/contexts/state';
+import State from '../contexts/state'
 
 /* EXPORT */
 
-export {State};
+export { State }
