@@ -1,49 +1,49 @@
 {
-    "name": "woby-simple-router",
-    "repository": "github:fabiospampinato/woby-simple-router",
-    "description": "A simple isomorphic router for Voby.",
-    "version": "1.4.3",
-    "type": "module",
-    "main": "./dist/index.cjs.js",
-    "module": "./dist/index.es.js",
-    "browser": "./dist/index.umd.js",
-    "types": "./dist/types/index.d.ts",
-    "sideEffects": false,
-    "scripts": {
-        "//clean": "tsex clean",
-        "//compile": "tsex compile",
-        "//compile:watch": "tsex compile --watch",
-        "//prepublishOnly": "tsex prepare",
-        "css:watch": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
-        "css": "tailwindcss -i ./src/input.css -o ./dist/output.css",
-        "declaration": "tsc --build --force --declaration --emitDeclarationOnly --verbose",
-        "declaration:watch": "tsc --build --force --declaration --emitDeclarationOnly --verbose --watch",
-        "watch": "run-p build:watch",
-        "build": "run-s build:vite",
-        "build:web": "vite build --config=vite.config.web.ts --force --mode production",
-        "web": "vite preview --config=vite.config.web.ts --host",
-        "dev:only": "vite --config=vite.config.web.ts --force --mode dev --host",
-        "dev": "run-p css:watch dev:only",
-        "build:vite": "vite build",
-        "build:watch": "vite build --watch",
-        "preview": "vite preview --host"
-    },
-    "keywords": [
-        "woby",
-        "router",
-        "simple",
-        "tiny",
-        "isomorphic"
-    ],
-    "dependencies": {
-        "noren": "^0.4.6"
-    },
-    "peerDependencies": {
-        "woby": "workspace:../woby"
-    },
-    "devDependencies": {
-        "tsex": "^3.0.1",
-        "typescript": "^5.2.2",
-        "vite": "^4.4.11"
-    }
+  "name": "woby-simple-router",
+  "repository": "github:fabiospampinato/woby-simple-router",
+  "description": "A simple isomorphic router for Voby.",
+  "version": "1.4.4",
+  "type": "module",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "browser": "./dist/index.umd.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "//clean": "tsex clean",
+    "//compile": "tsex compile",
+    "//compile:watch": "tsex compile --watch",
+    "//prepublishOnly": "tsex prepare",
+    "css:watch": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch",
+    "css": "tailwindcss -i ./src/input.css -o ./dist/output.css",
+    "declaration": "tsc --build --force --declaration --emitDeclarationOnly --verbose",
+    "declaration:watch": "tsc --build --force --declaration --emitDeclarationOnly --verbose --watch",
+    "watch": "run-p build:watch",
+    "build": "run-s build:vite",
+    "build:web": "vite build --config=vite.config.web.ts --force --mode production",
+    "web": "vite preview --config=vite.config.web.ts --host",
+    "dev:only": "vite --config=vite.config.web.ts --force --mode dev --host",
+    "dev": "run-p css:watch dev:only",
+    "build:vite": "vite build",
+    "build:watch": "vite build --watch",
+    "preview": "vite preview --host"
+  },
+  "keywords": [
+    "woby",
+    "router",
+    "simple",
+    "tiny",
+    "isomorphic"
+  ],
+  "dependencies": {
+    "noren": "^0.4.6"
+  },
+  "peerDependencies": {
+    "woby": "workspace:^"
+  },
+  "devDependencies": {
+    "tsex": "^3.0.1",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
+  }
 }

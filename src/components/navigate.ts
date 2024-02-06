@@ -2,8 +2,6 @@
 /* IMPORT */
 
 import { $$, type JSX } from 'woby'
-    // import type { JSX } from 'woby/jsx-runtime'
-    
 import useNavigate from '../hooks/use_navigate'
 import type { F, RouterPath } from '../types'
 
@@ -11,15 +9,15 @@ import type { F, RouterPath } from '../types'
 
 const Navigate = ({ to, state }: { to: F<RouterPath>, state?: any }): () => JSX.Element => {
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
-    return ((): undefined => {
+  return ((): undefined => {
 
-        queueMicrotask(() => navigate($$(to), { replace: true, state }))
+    queueMicrotask(() => navigate($$(to), { replace: true, state }))
 
-        return
+    return
 
-    }) as any
+  }) as any
 
 }
 
