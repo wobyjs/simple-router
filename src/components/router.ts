@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, untrack, useMemo, useResource, type JSX, useEffect } from 'woby'
+import { $$, jsx, untrack, useMemo, useResource, type JSX, useEffect } from 'woby'
 import getBackend from '../backends/backend'
 import { FALLBACK_ROUTE, NOOP } from '../constants'
 import State from '../contexts/state'

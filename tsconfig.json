@@ -22,7 +22,7 @@
     "noEmitOnError": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": false,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noImplicitThis": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
@@ -44,13 +44,12 @@
     "verbatimModuleSyntax": true,
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": false,
-    "paths": {
-      "~": [
-        "./src"
-      ],
-      "~/*": [
-        "./src/*"
-      ]
-    }
-  }
+    "rootDir": "./src",
+    "declarationDir": "./dist/types",
+    "declarationMap": true,
+  },
+  "exclude": [
+    "dist",
+    "vite.*.*ts"
+  ]
 }

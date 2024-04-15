@@ -11,7 +11,7 @@ const config = defineConfig({
         lib: {
             entry: ["./src/index.ts"],
             name: "woby-simple-router",
-            formats: ['cjs', 'es', 'umd'],
+            formats: [/*'cjs', '*/'es'/*, 'umd'*/],
             fileName: (format: string, entryName: string) => `${entryName}.${format}.js`
         },
         sourcemap: true,
