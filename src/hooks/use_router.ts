@@ -39,9 +39,7 @@ const useRouter = (routes: RouterRoute[]): RouterRouter => {
     const params = match.params
     const route = match.route.handlers[0]
 
-    console.log('route', params, route)
     return { params, route }
-
   }
 
   /* RETURN */

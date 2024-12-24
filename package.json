@@ -40,14 +40,14 @@
         "isomorphic"
     ],
     "dependencies": {
-        "noren": "^0.4.6"
+        "noren": "^0.4.7"
     },
     "peerDependencies": {
         "woby": "workspace:../woby"
     },
     "devDependencies": {
-        "tsex": "^3.2.1",
-        "typescript": "^5.4.4",
-        "vite": "^5.2.8"
+        "tsex": "^4.0.2",
+        "typescript": "^5.7.2",
+        "vite": "^6.0.5"
     }
 }
