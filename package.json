@@ -1,6 +1,6 @@
 {
     "name": "woby-simple-router",
-    "repository": "github:fabiospampinato/woby-simple-router",
+    "repository": "github:wongchichong/woby-simple-router",
     "description": "A simple isomorphic router for Voby.",
     "version": "1.4.7",
     "type": "module",
