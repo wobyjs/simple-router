@@ -2,7 +2,7 @@
     "name": "woby-simple-router",
     "repository": "github:fabiospampinato/woby-simple-router",
     "description": "A simple isomorphic router for Voby.",
-    "version": "1.4.6",
+    "version": "1.4.7",
     "type": "module",
     "main": "./dist/index.es.js",
     "module": "./dist/index.es.js",
