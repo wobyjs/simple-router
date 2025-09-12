@@ -2,7 +2,7 @@
     "name": "@woby/simple-router",
     "repository": "github:wongchichong/simple-router",
     "description": "A simple isomorphic router for Voby.",
-    "version": "1.4.9",
+    "version": "1.4.10",
     "publishConfig": {
         "access": "public"
     },
