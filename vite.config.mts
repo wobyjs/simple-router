@@ -37,7 +37,7 @@ const config = defineConfig({
         //     // Notice that it will override the default behavior of Vite.
         //     exportAsDefault: false,
 
-        //     // svgr options: https://woby-svgr.com/docs/options/
+        //     // svgr options: https://svgr.com/docs/options/
         //     svgrOptions: {
         //         // ...
         //     },

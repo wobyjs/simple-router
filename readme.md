@@ -1,13 +1,13 @@
-# Woby Simple Router
+# @woby/simple-router
 
-A simple isomorphic router for [Woby](https://github.com/wongchichong/woby).
+A simple isomorphic router for [Woby](https://github.com/wobyjs/woby).
 
-Heavily inspired by [solid-router](https://github.com/solidjs/solid-router). For a more direct port of that check out [voby-router](https://github.com/vobyjs/woby-router).
+Heavily inspired by [solid-router](https://github.com/solidjs/solid-router). For a more direct port of that check out [voby-router](https://github.com/vobyjs/router).
 
 ## Install
 
 ```sh
-pnpm install --save woby-simple-router
+pnpm install --save @woby/simple-router
 ```
 
 ## APIs
@@ -42,7 +42,7 @@ import UserAdmin from './pages/user_admin';
 import UserProfile from './pages/user_profile';
 import someLoader from './loaders/some';
 import {lazy} from 'woby';
-import {Navigate, Router} from 'woby-simple-router';
+import {Navigate, Router} from '@woby/simple-router';
 
 // First of all let's define some routes
 // The router is based on Noren (https://github.com/fabiospampinato/noren)
@@ -131,7 +131,7 @@ const app = (
 This crucial component renders the actual route that the router selected. If you don't use it your route won'tbe rendered.
 
 ```tsx
-import {Route} from 'woby-simple-router';
+import {Route} from '@woby/simple-router';
 
 // Left's render our route in the middle of some arbitrary components
 
@@ -151,7 +151,7 @@ const app = (
 This component provides an instant client-side navigation, without making a network request. It's basically an anchor tag that knows about the router.
 
 ```tsx
-import {Link} from 'woby-simple-router';
+import {Link} from '@woby/simple-router';
 
 // Let's create a basic navbar
 
@@ -171,7 +171,7 @@ const Navbar = () => (
 This component is like a `Link` that clicks itself right when it's rendered. It's useful for redirecting routes.
 
 ```ts
-import {Navigate} from 'woby-simple-router';
+import {Navigate} from '@woby/simple-router';
 
 // Let's redirect one route to another
 
@@ -196,7 +196,7 @@ This hook is not type-safe, you should provide a type for the value as a generic
 ```tsx
 import someLoader, {SomeValue} from './loaders/some';
 import {lazy, Suspense} from 'woby';
-import {useLoader} from 'woby-simple-router';
+import {useLoader} from '@woby/simple-router';
 
 const Routes = [
   {
@@ -224,7 +224,7 @@ const App = () => {
 This hook tells you the pathname, search, and hash parts of the url the router is currently at.
 
 ```tsx
-import {useLocation} from 'woby-simple-router';
+import {useLocation} from '@woby/simple-router';
 
 // Let's get the current location of the router
 
@@ -245,7 +245,7 @@ const App = () => {
 This hook allows you to change the pathname the router is at, programmatically.
 
 ```tsx
-import {useNavigate} from 'woby-simple-router';
+import {useNavigate} from '@woby/simple-router';
 
 // Let's build a custom <Link> component
 
@@ -270,7 +270,7 @@ const A = ({ href, children }) => {
 This hooks allows you to retrieve parameters defined in the currently matched path, e.g. `/user/:username`.
 
 ```tsx
-import {useParams} from 'woby-simple-router';
+import {useParams} from '@woby/simple-router';
 
 // Let's log a parameter
 
@@ -286,7 +286,7 @@ const App = () => {
 This hooks gives you the currently matched route object, it's relatively low level, but powerful, because you can attach arbitrary data to a route and retriving it this way.
 
 ```tsx
-import {useRoute} from 'woby-simple-router';
+import {useRoute} from '@woby/simple-router';
 
 // Let's log a parameter
 
@@ -304,7 +304,7 @@ This hook allows you to read and write search parameters, which are those encode
 Currently the `URLSearchParams` you receive won't react to changes in search parameters unless the entire location changes.
 
 ```tsx
-import {useSearchParams} from 'woby-simple-router';
+import {useSearchParams} from '@woby/simple-router';
 
 // Let's manipulate search parameters
 
@@ -321,7 +321,7 @@ const App = () => {
 This low-level hook gives you the raw router, given a list of routes. You might never have to use this directly.
 
 ```tsx
-import {useRouter} from 'woby-simple-router';
+import {useRouter} from '@woby/simple-router';
 
 const Routes = {
   {

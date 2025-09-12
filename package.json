@@ -1,8 +1,11 @@
 {
-    "name": "woby-simple-router",
-    "repository": "github:wongchichong/woby-simple-router",
+    "name": "@woby/simple-router",
+    "repository": "github:wongchichong/simple-router",
     "description": "A simple isomorphic router for Voby.",
     "version": "1.4.9",
+    "publishConfig": {
+        "access": "public"
+    },
     "type": "module",
     "main": "./dist/index.es.js",
     "module": "./dist/index.es.js",
