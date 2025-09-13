@@ -10,7 +10,7 @@ const config = defineConfig({
         minify: false,
         lib: {
             entry: ["./src/index.ts"],
-            name: "woby-simple-router",
+            name: "@woby/simple-router",
             formats: [/*'cjs', '*/'es'/*, 'umd'*/],
             fileName: (format: string, entryName: string) => `${entryName}.${format}.js`
         },
