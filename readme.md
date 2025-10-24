@@ -2,7 +2,7 @@
 
 A simple isomorphic router for [Woby](https://github.com/wobyjs/woby).
 
-Heavily inspired by [solid-router](https://github.com/solidjs/solid-router). For a more direct port of that check out [voby-router](https://github.com/vobyjs/router).
+Heavily inspired by [solid-router](https://github.com/solidjs/solid-router). For a more direct port of that check out [voby-router](https://github.com/wobyjs/router).
 
 ## Install
 
@@ -189,7 +189,7 @@ The following hooks allow you to extract some information from the router.
 
 #### `useLoader`
 
-This hook gives you a [`resource`](https://github.com/vobyjs/woby/#resource) to the resolved return value of the loader for the current route.
+This hook gives you a [`resource`](https://github.com/wobyjs/woby/#resource) to the resolved return value of the loader for the current route.
 
 This hook is not type-safe, you should provide a type for the value as a generic type argument, but it won't be guaranteed to be correct.
 
