@@ -38,7 +38,7 @@
         "build:web": "vite build --config=vite.config.web.mts --force --mode production",
         "web": "vite preview --config=vite.config.web.mts --host",
         "dev:only": "vite --config=vite.config.web.mts --force --mode dev --host",
-        "dev": "run-p css:watch dev:only",
+        "dev": "run-p dev:only",
         "build:vite": "vite build",
         "build:watch": "vite build --watch",
         "preview": "vite preview --host"
@@ -51,7 +51,11 @@
         "isomorphic"
     ],
     "dependencies": {
-        "noren": "^0.4.7"
+        "@tailwindcss/postcss": "^4.1.18",
+        "autoprefixer": "^10.4.23",
+        "noren": "^0.4.7",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.18"
     },
     "peerDependencies": {
         "woby": "workspace:../woby"

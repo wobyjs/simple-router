@@ -12,7 +12,13 @@ const Route = (): JSX.Element => {
 
     return (): JSX.Element => {
 
-        const to = route().to
+        const routeValue = route()
+        if (!routeValue || !routeValue.to) {
+            // If route is not ready or doesn't have a 'to' property, return null
+            return () => null
+        }
+
+        const to = routeValue.to
 
         return (): JSX.Element => {
 

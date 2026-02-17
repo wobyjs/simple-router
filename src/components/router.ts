@@ -15,11 +15,9 @@ const Router = ({ backend, routes, path, children }: { backend?: RouterBackend, 
 
   const [location, navigate] = getBackend(backend || 'path', path)
 
-
   const pathname = useMemo(() => castPath($$(location).replace(/[?#].*$/, '')))
-  const search = useMemo(() => location().replace(/^.*?(?:\?|$)/, '').replace(/#.*$/, ''))
-  const hash = useMemo(() => location().replace(/^.*?(?:#|$)/, ''))
-
+  const search = useMemo(() => $$(location).replace(/^.*?(?:\?|$)/, '').replace(/#.*$/, ''))
+  const hash = useMemo(() => $$(location).replace(/^.*?(?:#|$)/, ''))
 
   const router = useRouter(routes)
   const lookup = useMemo(() => router.route($$(pathname)) || router.route('/404') || FALLBACK_ROUTE)
@@ -88,7 +86,7 @@ export default Router
 //     params($$(lookup)?.params)
 //   })
 
-//   const loaderContext = () => ({ pathname: pathname(), search: search(), hash: hash(), params: params(), searchParams: searchParams(), route: route() })
+//   const loaderContext = () => ({ pathname: pathname() as `/${string}`, search: search(), hash: hash(), params: params(), searchParams: searchParams(), route: route() })
 //   const loader = useMemo(() => useResource(() => (route().loader || NOOP)(untrack(loaderContext))))
 
 //   return jsx(State.Provider, { value: { pathname, search, hash, navigate, params, searchParams, route, loader }, children })

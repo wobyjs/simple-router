@@ -46,10 +46,13 @@
     "noUncheckedIndexedAccess": false,
     "rootDir": "./src",
     "declarationDir": "./dist/types",
+    "jsx": "react-jsx",
+    "jsxImportSource": "woby",
     "declarationMap": true,
   },
   "exclude": [
     "dist",
-    "vite.*.*ts"
+    "vite.*.*ts",
+    "demo.tsx"
   ]
 }
