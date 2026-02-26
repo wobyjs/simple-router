@@ -48,14 +48,81 @@
             border-top: 1px solid #eee;
             color: #666;
         }
+
+        /* Custom element styles */
+        woby-link {
+            margin-right: 1rem;
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        woby-link:hover {
+            background-color: #ddd;
+        }
+
+        .active-link {
+            background-color: #007bff;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
     <h1>Simple Router Demo</h1>
+
+    <!-- Custom Elements Usage -->
+    <h2>Custom Elements Demo</h2>
+    <woby-router id="custom-router">
+        <nav>
+            <woby-link to="/" id="home-link">Home</woby-link>
+            <woby-link to="/about" id="about-link">About</woby-link>
+            <woby-link to="/contact" id="contact-link">Contact</woby-link>
+            <woby-link to="/products" id="products-link">Products</woby-link>
+            <woby-link to="/user/john" id="user-link">User Profile</woby-link>
+        </nav>
+
+        <div class="content">
+            <woby-route></woby-route>
+        </div>
+    </woby-router>
+
     <div id="app">Loading...</div>
 
     <script type="module" src="./demo.tsx"></script>
+
+    <!-- Custom elements test script -->
+    <script type="module">
+        // Wait for custom elements to be defined
+        Promise.all([
+            customElements.whenDefined('woby-link'),
+            customElements.whenDefined('woby-router'),
+            customElements.whenDefined('woby-route')
+        ]).then(() => {
+            console.log('Custom elements are ready!');
+
+            // Add click event listeners for active state
+            const links = document.querySelectorAll('woby-link');
+            links.forEach(link => {
+                link.addEventListener('click', function () {
+                    // Remove active class from all links
+                    links.forEach(l => l.classList.remove('active-link'));
+                    // Add active class to clicked link
+                    this.classList.add('active-link');
+                });
+            });
+
+            // Set initial active link based on current location
+            const currentPath = window.location.pathname;
+            const activeLink = document.querySelector(`woby-link[to="${currentPath}"]`);
+            if (activeLink) {
+                activeLink.classList.add('active-link');
+            }
+        }).catch(err => {
+            console.error('Failed to load custom elements:', err);
+        });
+    </script>
 </body>
 
 </html>

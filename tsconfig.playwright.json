@@ -1,0 +1,18 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "types": [
+            "node",
+            "@playwright/test"
+        ],
+        "noEmit": true
+    },
+    "include": [
+        "test.playwright/**/*.ts"
+    ],
+    "exclude": [
+        "dist",
+        "vite.*.*ts",
+        "demo.tsx"
+    ]
+}

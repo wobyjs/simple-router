@@ -3,10 +3,16 @@
 
 /* IMPORT */
 
-import Link from '../components/link'
-import Navigate from '../components/navigate'
-import Route from '../components/route'
-import Router from '../components/router'
+import Link from './link'
+import Navigate from './navigate'
+import Route from './route'
+import Router from './router'
+
+// Ensure custom elements are registered by importing the files
+import './link'
+import './navigate'
+import './route'
+import './router'
 
 /* EXPORT */
 

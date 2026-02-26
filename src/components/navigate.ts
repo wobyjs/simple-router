@@ -1,24 +1,40 @@
 
 /* IMPORT */
 
-import { $$, type JSX } from 'woby'
+import { $, $$, customElement, type ElementAttributes, HtmlString, type JSX } from 'woby'
+import { defaults } from 'woby'
+import type { ObservableMaybe } from 'woby'
+import type { RouterPath } from '../types'
 import useNavigate from '../hooks/use_navigate'
-import type { F, RouterPath } from '../types'
+
 
 /* MAIN */
 
-const Navigate = ({ to, state }: { to: F<RouterPath>, state?: any }): () => JSX.Element => {
+const Navigate = defaults(() => ({
+  to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
+  state: $(undefined as any) as ObservableMaybe<any> | undefined
+}), (props: { to?: ObservableMaybe<RouterPath>, state?: ObservableMaybe<any>, children?: JSX.Children }): JSX.Element => {
 
   const navigate = useNavigate()
 
-  return ((): undefined => {
+  queueMicrotask(() => navigate($$(props.to), { replace: true, state: $$(props.state) }))
 
-    queueMicrotask(() => navigate($$(to), { replace: true, state }))
+  return props.children as any || null
 
-    return
+})
 
-  }) as any
+// Register as custom element
+console.log('Registering woby-navigate custom element')
+customElement('woby-navigate', Navigate)
+console.log('woby-navigate custom element registered')
 
+// Type augmentation for JSX support
+declare module 'woby' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'woby-navigate': ElementAttributes<typeof Navigate>
+    }
+  }
 }
 
 /* EXPORT */

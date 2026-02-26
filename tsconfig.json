@@ -53,6 +53,8 @@
   "exclude": [
     "dist",
     "vite.*.*ts",
-    "demo.tsx"
+    "demo.tsx",
+    "test.playwright",
+    "*playwright*"
   ]
 }

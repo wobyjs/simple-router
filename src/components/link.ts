@@ -1,46 +1,51 @@
 
 /* IMPORT */
 
-import { $$, jsx, type JSX } from 'woby'
+import { $, $$, jsx, customElement, type ElementAttributes, HtmlString, HtmlBoolean, HtmlStyle, type JSX, } from 'woby'
+import { defaults } from 'woby'
+import type { ObservableMaybe } from 'woby'
 import useNavigate from '../hooks/use_navigate'
-import type { F, RouterPath } from '../types'
+import type { RouterPath } from '../types'
 
 /* MAIN */
 
-const Link = ({ to, replace, state, title, children, ...rest }: { to: F<RouterPath>, replace?: boolean, state?: any, title?: F<string>, children?: JSX.Children } & Omit<JSX.IntrinsicElement<'a'>, 'children' | 'href' | 'replace' | 'state' | 'title' | 'onClick'>): JSX.Element => {
 
-    const navigate = useNavigate()
 
-    const onClick = (event: MouseEvent): void => {
+const Link = defaults(() => ({
+  to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
+  replace: $(false, HtmlBoolean) as ObservableMaybe<boolean> | undefined,
+  state: $(undefined as any) as ObservableMaybe<any> | undefined,
+  title: $('', HtmlString) as ObservableMaybe<string> | undefined,
+  style: $('', HtmlStyle) as ObservableMaybe<JSX.Style> | undefined,
+}), (props: { to?: ObservableMaybe<RouterPath>, replace?: ObservableMaybe<boolean>, state?: ObservableMaybe<any>, title?: ObservableMaybe<string>, style?: ObservableMaybe<JSX.Style>, children?: JSX.Children } & Omit<JSX.IntrinsicElement<'a'>, 'children' | 'href' | 'replace' | 'state' | 'title' | 'style' | 'onClick'>): JSX.Element => {
 
-        event.preventDefault()
-
-        navigate($$(to), { replace, state })
-
-    }
-
-    return jsx('a', { href: to, title, onClick, children, ...rest })
-
-    // return <a /* href={to} title={title} onClick={onClick} */ {...{ href: to, title, onClick, ...rest }}> {children}</a>
-
-}
-
-{/* const A = ({ to, children }) => {
   const navigate = useNavigate()
-  const onClick = event => {
+
+  const onClick = (event: MouseEvent): void => {
+
     event.preventDefault()
-    console.log(`Navigating to: "${to}"`)
-    // Basic navigation, with history.pushState and no state value
-    navigate(to)
-    // Replace navigation, with history.replaceState, and no state value
-    navigate(to, { replace: true })
-    // Replace navigation, with history.replaceState, and an arbitrary state value
-    navigate(to, { replace: true, state: {} })
+
+    navigate($$(props.to), { replace: $$(props.replace), state: $$(props.state) })
+
   }
-  return <a href={ to } onClick = { onClick } > { children } < /a>;
-}; */}
 
+  return jsx('a', { href: $$(props.to), title: $$(props.title), style: $$(props.style), onClick, children: props.children, ...props })
 
+})
+
+// Register as custom element
+console.log('Registering woby-link custom element')
+customElement('woby-link', Link)
+console.log('woby-link custom element registered')
+
+// Type augmentation for JSX support
+declare module 'woby' {
+  namespace JSX {
+    interface IntrinsicElements {
+      'woby-link': ElementAttributes<typeof Link>
+    }
+  }
+}
 
 /* EXPORT */
 
