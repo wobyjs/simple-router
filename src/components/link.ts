@@ -19,13 +19,17 @@ const Link = defaults(() => ({
   style: $('', HtmlStyle) as ObservableMaybe<JSX.Style> | undefined,
 }), (props: { to?: ObservableMaybe<RouterPath>, replace?: ObservableMaybe<boolean>, state?: ObservableMaybe<any>, title?: ObservableMaybe<string>, style?: ObservableMaybe<JSX.Style>, children?: JSX.Children } & Omit<JSX.IntrinsicElement<'a'>, 'children' | 'href' | 'replace' | 'state' | 'title' | 'style' | 'onClick'>): JSX.Element => {
 
-  const navigate = useNavigate()
-
   const onClick = (event: MouseEvent): void => {
 
     event.preventDefault()
 
-    navigate($$(props.to), { replace: $$(props.replace), state: $$(props.state) })
+    const navigate = useNavigate()
+    if (navigate) {
+      navigate($$(props.to), { replace: $$(props.replace), state: $$(props.state) })
+    } else {
+      // Fallback to standard navigation if router context not available
+      window.location.href = $$(props.to)
+    }
 
   }
 

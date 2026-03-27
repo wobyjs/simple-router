@@ -8,7 +8,8 @@ import type { OR, RouterParams } from '../types'
 
 const useParams = (): OR<RouterParams> => {
 
-    return useState().params
+    const state = useState()
+    return state?.params
 
 }
 

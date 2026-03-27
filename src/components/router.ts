@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect } from 'woby'
+import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, resolve } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import getBackend from '../backends/backend'
@@ -39,7 +39,10 @@ const Router = defaults(() => ({
     const l = $$(lookup) /*solve temp useMemo can't invoke*/
   })
 
-  return jsx(State.Provider, { value: { pathname, search, hash, navigate, params, searchParams, route, loader }, children: props.children })
+  // Use context() directly to establish context for custom elements
+  // This ensures the woby-router custom element itself acts as the provider,
+  // not just containing a <context-provider> inside shadow DOM
+  return context({ [State.symbol]: { pathname, search, hash, navigate, params, searchParams, route, loader } }, () => resolve(props.children))
 
 })
 

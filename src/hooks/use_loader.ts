@@ -9,7 +9,8 @@ import type { Resource } from '../types'
 
 const useLoader = <T = unknown>(): Resource<T> => {
 
-    return untrack(useState().loader)
+    const state = useState()
+    return state ? untrack(state.loader) : undefined
 
 }
 

@@ -8,7 +8,8 @@ import type { OR } from '../types'
 
 const useSearchParams = (): OR<URLSearchParams> => {
 
-    return useState().searchParams
+    const state = useState()
+    return state?.searchParams
 
 }
 

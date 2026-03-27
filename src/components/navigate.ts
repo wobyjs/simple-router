@@ -15,9 +15,15 @@ const Navigate = defaults(() => ({
   state: $(undefined as any) as ObservableMaybe<any> | undefined
 }), (props: { to?: ObservableMaybe<RouterPath>, state?: ObservableMaybe<any>, children?: JSX.Children }): JSX.Element => {
 
-  const navigate = useNavigate()
-
-  queueMicrotask(() => navigate($$(props.to), { replace: true, state: $$(props.state) }))
+  queueMicrotask(() => {
+    const navigate = useNavigate()
+    if (navigate) {
+      navigate($$(props.to), { replace: true, state: $$(props.state) })
+    } else {
+      // Fallback to standard navigation if router context not available
+      window.location.href = $$(props.to)
+    }
+  })
 
   return props.children as any || null
 

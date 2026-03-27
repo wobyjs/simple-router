@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { untrack, customElement, type ElementAttributes, type JSX } from 'woby'
+import { untrack, $$, customElement, type ElementAttributes, type JSX } from 'woby'
 import { defaults } from 'woby'
 
 import useRoute from '../hooks/use_route'
@@ -14,7 +14,7 @@ const Route = defaults(() => ({}), (_props: { children?: JSX.Children }): JSX.El
 
   return (): JSX.Element => {
 
-    const routeValue = route()
+    const routeValue = route ? $$(route) : undefined
     if (!routeValue || !routeValue.to) {
       // If route is not ready or doesn't have a 'to' property, return null
       return () => null

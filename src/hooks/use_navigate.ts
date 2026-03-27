@@ -8,7 +8,8 @@ import type { RouterNavigate } from '../types'
 
 const useNavigate = (): RouterNavigate => {
 
-    return useState().navigate
+    const state = useState()
+    return state?.navigate
 
 }
 

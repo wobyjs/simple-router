@@ -8,7 +8,8 @@ import type { OR, RouterRoute } from '../types'
 
 const useRoute = (): OR<RouterRoute> => {
 
-    return useState().route
+    const state = useState()
+    return state?.route
 
 }
 
