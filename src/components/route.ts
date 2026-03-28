@@ -23,14 +23,20 @@ const Route = defaults(def, (_props): JSX.Element => {
     console.log('[Route] === USEMEMO EXECUTING ===')
     const routeValue = route ? $$(route) : undefined
     console.log('[Route] useMemo - routeValue path:', routeValue?.path)
-    if (!routeValue || !routeValue.to) {
-      console.log('[Route] No route value, returning null')
+    // Return null for empty/fallback routes (no path means FALLBACK_ROUTE with throwing to())
+    if (!routeValue || !routeValue.to || !routeValue.path) {
+      console.log('[Route] No route value or empty path (fallback), returning null')
       return null
     }
-    const component = $$(routeValue.to)
-    console.log('[Route] Rendering component for', routeValue.path, 'component type:', typeof component)
-    console.log('[Route] === USEMEMO DONE ===')
-    return component as any
+    try {
+      const component = $$(routeValue.to)
+      console.log('[Route] Rendering component for', routeValue.path, 'component type:', typeof component)
+      console.log('[Route] === USEMEMO DONE ===')
+      return component as any
+    } catch (e) {
+      console.log('[Route] Error rendering component for', routeValue.path, ':', e)
+      return null
+    }
   })
 
 })

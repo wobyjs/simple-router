@@ -41,7 +41,7 @@ const Link = defaults(def, (props): JSX.Element => {
     }
   }
 
-  return jsx('a', { href: $$(to), title: $$(title), style: $$(style), onClick, children, ...props })
+  return jsx('a', { href: to, title: title, style: style, onClick, children })
 
 })
 

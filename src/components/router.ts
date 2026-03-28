@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, SYMBOL_CONTEXT } from 'woby'
+import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, SYMBOL_CONTEXT, setPendingContextWrap } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import getBackend from '../backends/backend'
@@ -16,7 +16,7 @@ import type { F, RouterBackend, RouterPath, RouterRoute } from '../types'
 // Define default props function - required for custom elements
 const def = () => ({
   backend: $('path' as any, HtmlString) as ObservableMaybe<RouterBackend> | undefined,
-  routes: $([] as RouterRoute[]) as ObservableMaybe<RouterRoute[]> | undefined,
+  routes: $([] as RouterRoute[], { toHtml: () => undefined }) as ObservableMaybe<RouterRoute[]> | undefined,
   path: $(undefined as any) as ObservableMaybe<F<RouterPath> | undefined> | undefined,
   [SYMBOL_CONTEXT]: {} // Mark as context provider
 })
@@ -46,12 +46,16 @@ const Router = defaults(def, (props): JSX.Element => {
     return result
   })
 
-  const router = useRouter($$(props.routes))
-  console.log('[Router] Router instance created, routes:', $$(props.routes)?.length)
+  const router = useMemo(() => {
+    const r = useRouter($$(props.routes) || [])
+    console.log('[Router] Router instance created, routes:', $$(props.routes)?.length)
+    return r
+  })
 
   const lookup = useMemo(() => {
     const pn = $$(pathname)
-    const result = router.route(pn) || router.route('/404') || FALLBACK_ROUTE
+    const r = $$(router)
+    const result = r.route(pn) || r.route('/404') || FALLBACK_ROUTE
     console.log('[Router] === LOOKUP COMPUTED ===')
     console.log('[Router] lookup computed - pathname:', pn, 'result route path:', result.route?.path)
     return result
@@ -96,9 +100,16 @@ const Router = defaults(def, (props): JSX.Element => {
 
   // Provide context for descendant custom elements
   // Children rendered within context() can reactively track observables
+  const stateValue = { pathname, search, hash, navigate, params, searchParams, route, loader }
   console.log('[Router] About to call context() with route:', route().path)
   console.log('[Router] Context values - pathname:', typeof pathname, 'route:', typeof route)
-  return context({ [State.symbol]: { pathname, search, hash, navigate, params, searchParams, route, loader } }, () => {
+
+  // Register a pending context wrap so that sibling/descendant custom elements
+  // (woby-link, woby-route) can re-establish the State context chain.
+  // This is picked up by createBrowserCustomElement via consumePendingContextWrap().
+  setPendingContextWrap((fn: () => void) => context({ [State.symbol]: stateValue }, fn))
+
+  return context({ [State.symbol]: stateValue }, () => {
     console.log('[Router] context() callback executing')
     const children = props.children
     const result = typeof children === 'function' ? children() : children

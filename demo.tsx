@@ -133,6 +133,20 @@ const renderApp = () => {
     } else {
         console.error('App element not found!')
     }
+
+    // Set routes on the custom element woby-router
+    // Routes are shared between the TSX Router and the custom element woby-router
+    const customRouter = document.getElementById('custom-router') as any
+    if (customRouter?.props?.routes) {
+        customRouter.props.routes([
+            { path: '/', to: <Home /> },
+            { path: '/about', to: <About /> },
+            { path: '/contact', to: <Contact /> },
+            { path: '/products', to: <Products /> },
+            { path: '/user/:username', to: <UserProfile /> },
+            { path: '/404', to: <NotFound /> }
+        ])
+    }
 }
 
 if (document.readyState === 'loading') {
