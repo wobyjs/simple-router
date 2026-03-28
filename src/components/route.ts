@@ -1,34 +1,37 @@
 
 /* IMPORT */
 
-import { untrack, $$, customElement, type ElementAttributes, type JSX } from 'woby'
+import { untrack, $$, customElement, type ElementAttributes, type JSX, useMemo } from 'woby'
 import { defaults } from 'woby'
 
 import useRoute from '../hooks/use_route'
 
 /* MAIN */
 
-const Route = defaults(() => ({}), (_props: { children?: JSX.Children }): JSX.Element => {
+// Define default props function - required for custom elements
+const def = () => ({})
 
+const Route = defaults(def, (_props): JSX.Element => {
+  console.log('[Route] === ROUTE COMPONENT RENDER START ===')
   const route = useRoute()
 
-  return (): JSX.Element => {
+  console.log('[Route] Rendering with route:', route ? 'exists' : 'null')
 
+  // Reactively render the current route's component using useMemo
+  // This creates a computed observable that tracks route changes
+  return useMemo((): JSX.Element => {
+    console.log('[Route] === USEMEMO EXECUTING ===')
     const routeValue = route ? $$(route) : undefined
+    console.log('[Route] useMemo - routeValue path:', routeValue?.path)
     if (!routeValue || !routeValue.to) {
-      // If route is not ready or doesn't have a 'to' property, return null
-      return () => null
+      console.log('[Route] No route value, returning null')
+      return null
     }
-
-    const to = routeValue.to
-
-    return (): JSX.Element => {
-
-      return untrack(to) as any
-
-    }
-
-  }
+    const component = $$(routeValue.to)
+    console.log('[Route] Rendering component for', routeValue.path, 'component type:', typeof component)
+    console.log('[Route] === USEMEMO DONE ===')
+    return component as any
+  })
 
 })
 

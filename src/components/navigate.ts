@@ -10,22 +10,25 @@ import useNavigate from '../hooks/use_navigate'
 
 /* MAIN */
 
-const Navigate = defaults(() => ({
+// Define default props function - required for custom elements
+const def = () => ({
   to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
   state: $(undefined as any) as ObservableMaybe<any> | undefined
-}), (props: { to?: ObservableMaybe<RouterPath>, state?: ObservableMaybe<any>, children?: JSX.Children }): JSX.Element => {
+})
+
+const Navigate = defaults(def, (props): JSX.Element => {
+  const { to, state, children } = props
 
   queueMicrotask(() => {
     const navigate = useNavigate()
     if (navigate) {
-      navigate($$(props.to), { replace: true, state: $$(props.state) })
+      navigate($$(to), { replace: true, state: $$(state) })
     } else {
-      // Fallback to standard navigation if router context not available
-      window.location.href = $$(props.to)
+      window.location.href = $$(to)
     }
   })
 
-  return props.children as any || null
+  return children as any || null
 
 })
 

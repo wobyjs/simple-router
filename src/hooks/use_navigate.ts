@@ -9,6 +9,7 @@ import type { RouterNavigate } from '../types'
 const useNavigate = (): RouterNavigate => {
 
     const state = useState()
+    console.log('[useNavigate] state navigate:', [state?.navigate])
     return state?.navigate
 
 }

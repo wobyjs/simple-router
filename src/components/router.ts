@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, resolve } from 'woby'
+import { $, $$, jsx, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, SYMBOL_CONTEXT } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import getBackend from '../backends/backend'
@@ -13,36 +13,98 @@ import type { F, RouterBackend, RouterPath, RouterRoute } from '../types'
 
 /* MAIN */
 
-const Router = defaults(() => ({
+// Define default props function - required for custom elements
+const def = () => ({
   backend: $('path' as any, HtmlString) as ObservableMaybe<RouterBackend> | undefined,
   routes: $([] as RouterRoute[]) as ObservableMaybe<RouterRoute[]> | undefined,
-  path: $(undefined as any) as ObservableMaybe<F<RouterPath> | undefined> | undefined
-}), (props: { backend?: ObservableMaybe<RouterBackend>, routes?: ObservableMaybe<RouterRoute[]>, path?: ObservableMaybe<F<RouterPath> | undefined>, children?: JSX.Children }): JSX.Element => {
+  path: $(undefined as any) as ObservableMaybe<F<RouterPath> | undefined> | undefined,
+  [SYMBOL_CONTEXT]: {} // Mark as context provider
+})
 
+const Router = defaults(def, (props): JSX.Element => {
+
+  console.log('[Router] === RENDER START ===')
   const [location, navigate] = getBackend($$(props.backend) || 'path', $$(props.path))
+  console.log('[Router] Backend obtained - location:', typeof location, 'navigate:', typeof navigate)
 
-  const pathname = useMemo(() => castPath($$(location).replace(/[?#].*$/, '')))
-  const search = useMemo(() => $$(location).replace(/^.*?(?:\?|$)/, '').replace(/#.*$/, ''))
-  const hash = useMemo(() => $$(location).replace(/^.*?(?:#|$)/, ''))
+  const pathname = useMemo(() => {
+    const loc = $$(location)
+    const result = castPath(loc.replace(/[?#].*$/, ''))
+    console.log('[Router] pathname computed - location:', loc, '=> pathname:', result)
+    return result
+  })
+  const search = useMemo(() => {
+    const loc = $$(location)
+    const result = $$(location).replace(/^.*?(?:\?|$)/, '').replace(/#.*$/, '')
+    console.log('[Router] search computed - location:', loc, '=> search:', result)
+    return result
+  })
+  const hash = useMemo(() => {
+    const loc = $$(location)
+    const result = $$(location).replace(/^.*?(?:#|$)/, '')
+    console.log('[Router] hash computed - location:', loc, '=> hash:', result)
+    return result
+  })
 
   const router = useRouter($$(props.routes))
-  const lookup = useMemo(() => router.route($$(pathname)) || router.route('/404') || FALLBACK_ROUTE)
-  const route = useMemo(() => lookup().route)
-  const params = useMemo(() => lookup().params)
-  const searchParams = useMemo(() => new URLSearchParams(search())) //TODO: Maybe update the URL too? Maybe push an entry into the history? Maybe react to individual changes?
+  console.log('[Router] Router instance created, routes:', $$(props.routes)?.length)
+
+  const lookup = useMemo(() => {
+    const pn = $$(pathname)
+    const result = router.route(pn) || router.route('/404') || FALLBACK_ROUTE
+    console.log('[Router] === LOOKUP COMPUTED ===')
+    console.log('[Router] lookup computed - pathname:', pn, 'result route path:', result.route?.path)
+    return result
+  })
+
+  const route = useMemo(() => {
+    const lookupResult = $$(lookup)
+    const result = lookupResult.route
+    console.log('[Router] === ROUTE OBSERVABLE CREATED ===')
+    console.log('[Router] route observable created:', result?.path, 'from lookup:', !!lookupResult)
+    return result
+  })
+
+  const params = useMemo(() => {
+    const lookupResult = $$(lookup)
+    const result = lookupResult.params
+    console.log('[Router] params computed:', result)
+    return result
+  })
+
+  const searchParams = useMemo(() => {
+    const s = $$(search)
+    const result = new URLSearchParams(s)
+    console.log('[Router] searchParams computed:', s, '=>', Array.from(result.entries()))
+    return result
+  }) //TODO: Maybe update the URL too? Maybe push an entry into the history? Maybe react to individual changes()
 
   const loaderContext = () => ({ pathname: pathname(), search: search(), hash: hash(), params: params(), searchParams: searchParams(), route: route() })
-  const loader = useMemo(() => useResource(() => (route().loader || NOOP)(untrack(loaderContext))))
+  const loader = useMemo(() => {
+    console.log('[Router] loader useMemo starting...')
+    const result = useResource(() => (route().loader || NOOP)(untrack(loaderContext)))
+    console.log('[Router] loader created:', !!result)
+    return result
+  })
 
   useEffect(() => {
     //@ts-ignore
     const l = $$(lookup) /*solve temp useMemo can't invoke*/
+    console.log('[Router] === USEEFFECT TRIGGERED ===')
+    console.log('[Router] useEffect triggered - current route:', l.route?.path)
   })
 
-  // Use context() directly to establish context for custom elements
-  // This ensures the woby-router custom element itself acts as the provider,
-  // not just containing a <context-provider> inside shadow DOM
-  return context({ [State.symbol]: { pathname, search, hash, navigate, params, searchParams, route, loader } }, () => resolve(props.children))
+  // Provide context for descendant custom elements
+  // Children rendered within context() can reactively track observables
+  console.log('[Router] About to call context() with route:', route().path)
+  console.log('[Router] Context values - pathname:', typeof pathname, 'route:', typeof route)
+  return context({ [State.symbol]: { pathname, search, hash, navigate, params, searchParams, route, loader } }, () => {
+    console.log('[Router] context() callback executing')
+    const children = props.children
+    const result = typeof children === 'function' ? children() : children
+    console.log('[Router] context() callback done, returning:', !!result)
+    return result
+  })
 
 })
 

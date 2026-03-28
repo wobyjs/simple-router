@@ -9,31 +9,39 @@ import type { RouterPath } from '../types'
 
 /* MAIN */
 
+// Define default props function - required for custom elements
+const def = () => {
+  return {
+    to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
+    replace: $(false, HtmlBoolean) as ObservableMaybe<boolean> | undefined,
+    state: $(undefined as any) as ObservableMaybe<any> | undefined,
+    title: $('', HtmlString) as ObservableMaybe<string> | undefined,
+    style: $('', HtmlStyle) as ObservableMaybe<JSX.Style> | undefined
+  }
+}
 
+const Link = defaults(def, (props): JSX.Element => {
+  const {
+    to,
+    replace,
+    state,
+    title,
+    style,
+    children
+  } = props
 
-const Link = defaults(() => ({
-  to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
-  replace: $(false, HtmlBoolean) as ObservableMaybe<boolean> | undefined,
-  state: $(undefined as any) as ObservableMaybe<any> | undefined,
-  title: $('', HtmlString) as ObservableMaybe<string> | undefined,
-  style: $('', HtmlStyle) as ObservableMaybe<JSX.Style> | undefined,
-}), (props: { to?: ObservableMaybe<RouterPath>, replace?: ObservableMaybe<boolean>, state?: ObservableMaybe<any>, title?: ObservableMaybe<string>, style?: ObservableMaybe<JSX.Style>, children?: JSX.Children } & Omit<JSX.IntrinsicElement<'a'>, 'children' | 'href' | 'replace' | 'state' | 'title' | 'style' | 'onClick'>): JSX.Element => {
+  const navigate = useNavigate()
 
   const onClick = (event: MouseEvent): void => {
-
     event.preventDefault()
-
-    const navigate = useNavigate()
     if (navigate) {
-      navigate($$(props.to), { replace: $$(props.replace), state: $$(props.state) })
+      navigate($$(to), { replace: $$(replace), state: $$(state) })
     } else {
-      // Fallback to standard navigation if router context not available
-      window.location.href = $$(props.to)
+      window.location.href = $$(to)
     }
-
   }
 
-  return jsx('a', { href: $$(props.to), title: $$(props.title), style: $$(props.style), onClick, children: props.children, ...props })
+  return jsx('a', { href: $$(to), title: $$(title), style: $$(style), onClick, children, ...props })
 
 })
 
