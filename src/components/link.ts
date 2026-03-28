@@ -1,10 +1,11 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, customElement, type ElementAttributes, HtmlString, HtmlBoolean, HtmlStyle, type JSX, } from 'woby'
+import { $, $$, jsx, customElement, type ElementAttributes, HtmlString, HtmlBoolean, HtmlStyle, type JSX, useMemo, useEffect } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import useNavigate from '../hooks/use_navigate'
+import useLocation from '../hooks/use_location'
 import type { RouterPath } from '../types'
 
 /* MAIN */
@@ -31,6 +32,7 @@ const Link = defaults(def, (props): JSX.Element => {
   } = props
 
   const navigate = useNavigate()
+  const location = useLocation()
 
   const onClick = (event: MouseEvent): void => {
     event.preventDefault()
@@ -41,7 +43,59 @@ const Link = defaults(def, (props): JSX.Element => {
     }
   }
 
-  return jsx('a', { href: to, title: title, style: style, onClick, children })
+  // Compute active state reactively - compare unwrapped pathnames
+  const isActive = useMemo(() => {
+    const locPathname = $$(location.pathname)
+    const toPath = $$(to)
+    const active = locPathname === toPath
+    console.log('[Link isActive] location.pathname:', locPathname, 'to:', toPath, 'active:', active)
+    return active
+  })
+
+  // Merge user-provided style with active state styling
+  // Each reactive property calls isActive() inside its function to track location changes
+  const computedStyle = useMemo(() => {
+    const userStyleObj = typeof $$(style) === 'object' ? ($$(style) as Record<string, any>) : {}
+    return {
+      ...userStyleObj,
+      backgroundColor: () => {
+        const active = $$(isActive)
+        console.log('[computedStyle.backgroundColor] active:', active)
+        return active ? '#007bff' : (userStyleObj['backgroundColor'] || 'transparent')
+      },
+      color: () => {
+        const active = $$(isActive)
+        console.log('[computedStyle.color] active:', active)
+        return active ? 'white' : (userStyleObj['color'] || '#333')
+      }
+    } as JSX.Style
+  })
+
+  // Sync active class to the custom element host
+  useEffect(() => {
+    const active = isActive()
+    console.log('[Link useEffect] active state:', active, 'to:', $$(to))
+
+    // Find the host custom element by querying for it
+    // Since we're inside shadow DOM, we need to find our way back to the host
+    const anchorEl = (typeof window !== 'undefined') ? document.querySelector(`a[href="${$$(to)}"]`) : null
+    const hostEl = anchorEl?.getRootNode() instanceof ShadowRoot
+      ? (anchorEl.getRootNode() as ShadowRoot).host
+      : null
+
+    console.log('[Link useEffect] anchorEl:', anchorEl, 'hostEl:', hostEl)
+    if (hostEl) {
+      if (active) {
+        hostEl.classList.add('active-link')
+        console.log('[Link useEffect] Added active-link class to:', hostEl.id)
+      } else {
+        hostEl.classList.remove('active-link')
+        console.log('[Link useEffect] Removed active-link class from:', hostEl.id)
+      }
+    }
+  })
+
+  return jsx('a', { href: to, title: title, style: computedStyle, onClick, children })
 
 })
 
