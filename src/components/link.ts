@@ -48,7 +48,6 @@ const Link = defaults(def, (props): JSX.Element => {
     const locPathname = $$(location.pathname)
     const toPath = $$(to)
     const active = locPathname === toPath
-    console.log('[Link isActive] location.pathname:', locPathname, 'to:', toPath, 'active:', active)
     return active
   })
 
@@ -60,12 +59,10 @@ const Link = defaults(def, (props): JSX.Element => {
       ...userStyleObj,
       backgroundColor: () => {
         const active = $$(isActive)
-        console.log('[computedStyle.backgroundColor] active:', active)
         return active ? '#007bff' : (userStyleObj['backgroundColor'] || 'transparent')
       },
       color: () => {
         const active = $$(isActive)
-        console.log('[computedStyle.color] active:', active)
         return active ? 'white' : (userStyleObj['color'] || '#333')
       }
     } as JSX.Style
@@ -74,7 +71,6 @@ const Link = defaults(def, (props): JSX.Element => {
   // Sync active class to the custom element host
   useEffect(() => {
     const active = isActive()
-    console.log('[Link useEffect] active state:', active, 'to:', $$(to))
 
     // Find the host custom element by querying for it
     // Since we're inside shadow DOM, we need to find our way back to the host
@@ -83,14 +79,11 @@ const Link = defaults(def, (props): JSX.Element => {
       ? (anchorEl.getRootNode() as ShadowRoot).host
       : null
 
-    console.log('[Link useEffect] anchorEl:', anchorEl, 'hostEl:', hostEl)
     if (hostEl) {
       if (active) {
         hostEl.classList.add('active-link')
-        console.log('[Link useEffect] Added active-link class to:', hostEl.id)
       } else {
         hostEl.classList.remove('active-link')
-        console.log('[Link useEffect] Removed active-link class from:', hostEl.id)
       }
     }
   })
@@ -100,9 +93,7 @@ const Link = defaults(def, (props): JSX.Element => {
 })
 
 // Register as custom element
-console.log('Registering woby-link custom element')
 customElement('woby-link', Link)
-console.log('woby-link custom element registered')
 
 // Type augmentation for JSX support
 declare module 'woby' {

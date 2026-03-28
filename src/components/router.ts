@@ -43,6 +43,12 @@ const Router = defaults(def, (props): JSX.Element => {
     return r
   })
 
+  useEffect(() => {
+    const pn = $$(pathname)
+    const r = $$(router)
+    r.route(pn)
+  })
+
   const lookup = useMemo(() => {
     const pn = $$(pathname)
     const r = $$(router)
@@ -77,12 +83,9 @@ const Router = defaults(def, (props): JSX.Element => {
   // Provide context for descendant custom elements
   // Children rendered within context() can reactively track observables
   const stateValue = { pathname, search, hash, navigate, params, searchParams, route, loader }
-  console.log('[Router] About to call context() with route:', route().path)
-  console.log('[Router] Context values - pathname:', typeof pathname, 'route:', typeof route)
 
-  // Register a pending context wrap so that sibling/descendant custom elements
-  // (woby-link, woby-route) can re-establish the State context chain.
-  // This is picked up by createBrowserCustomElement via consumePendingContextWrap().
+  route().path //do not remove, to trigger content changes
+
   setPendingContextWrap((fn: () => void) => context({ [State.symbol]: stateValue }, fn))
 
   return context({ [State.symbol]: stateValue }, () => {

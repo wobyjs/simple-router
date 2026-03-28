@@ -33,9 +33,7 @@ const Navigate = defaults(def, (props): JSX.Element => {
 })
 
 // Register as custom element
-console.log('Registering woby-navigate custom element')
 customElement('woby-navigate', Navigate)
-console.log('woby-navigate custom element registered')
 
 // Type augmentation for JSX support
 declare module 'woby' {

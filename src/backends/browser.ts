@@ -23,29 +23,21 @@ const browser = (browserPath: F<RouterPath>, routerPath?: F<RouterPath>, options
 
     const navigate = (pathNext: RouterPath, navigateOptions: RouterNavigateOptions = {}): void => { // Update path manually
 
-        console.log('[Browser Backend] === NAVIGATE START ===')
-        console.log('[Browser Backend] navigate called with pathNext:', pathNext, 'options:', navigateOptions)
-
         if (path() === pathNext) {
-            console.log('[Browser Backend] Path unchanged, skipping update')
             return // Already there
         }
 
         if (options.resetScroll) {
-            console.log('[Browser Backend] Resetting scroll')
             globalThis.window?.scrollTo(0, 0)
         }
 
         if (options.history) {
-            console.log('[Browser Backend] Updating history API')
             const url = options.historyHash ? `#${pathNext}` : pathNext
             const state = navigateOptions.state ?? ''
 
             if (navigateOptions.replace) {
-                console.log('[Browser Backend] Using replaceState')
                 globalThis.history?.replaceState(state, '', url)
             } else {
-                console.log('[Browser Backend] Using pushState')
                 globalThis.history?.pushState(state, '', url)
             }
             // Dispatch popstate so all other Router instances (e.g. custom-element routers)
@@ -53,11 +45,7 @@ const browser = (browserPath: F<RouterPath>, routerPath?: F<RouterPath>, options
             globalThis.window?.dispatchEvent(new PopStateEvent('popstate', { state }))
         }
 
-        console.log('[Browser Backend] Before path() update, current path:', path())
-        console.log('[Browser Backend] Calling path() setter with:', pathNext)
         path(pathNext)
-        console.log('[Browser Backend] After path() update, new path:', path())
-        console.log('[Browser Backend] === NAVIGATE END ===')
 
     }
 
