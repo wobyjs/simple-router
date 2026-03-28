@@ -48,6 +48,9 @@ const browser = (browserPath: F<RouterPath>, routerPath?: F<RouterPath>, options
                 console.log('[Browser Backend] Using pushState')
                 globalThis.history?.pushState(state, '', url)
             }
+            // Dispatch popstate so all other Router instances (e.g. custom-element routers)
+            // also pick up the new path – history.pushState/replaceState do not fire popstate.
+            globalThis.window?.dispatchEvent(new PopStateEvent('popstate', { state }))
         }
 
         console.log('[Browser Backend] Before path() update, current path:', path())
