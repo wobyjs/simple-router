@@ -1,12 +1,12 @@
 
 /* IMPORT */
 
-import { $, $$, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, resolve } from 'woby'
+import { $, $$, untrack, useMemo, useResource, customElement, context, SYMBOL_CONTEXT_WRAP, type ElementAttributes, HtmlString, type JSX, useEffect, resolve } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import getBackend from '../backends/backend'
 import { FALLBACK_ROUTE, NOOP } from '../constants'
-import State from '../contexts/state'
+import State, { routerState$ } from '../contexts/state'
 import useRouter from '../hooks/use_router'
 import { castPath } from '../utils'
 import type { F, RouterBackend, RouterPath, RouterRoute } from '../types'
@@ -81,6 +81,19 @@ const Router = defaults(def, (props): JSX.Element => {
 
   // Provide context for all descendants using State.Provider
   const stateValue = { pathname, search, hash, navigate, params, searchParams, route, loader }
+
+  // Push into module-level observable so woby-route can read it reactively
+  // even when it constructed before the soby context chain was ready.
+  routerState$(stateValue)
+
+  // Set SYMBOL_CONTEXT_WRAP on the woby-router DOM element so child custom
+  // elements (woby-route, woby-link) can find the State context via
+  // collectAncestorContextWrap() when they run their constructors.
+  const stateSymbol = (State as any).symbol
+  useEffect(() => {
+    const el = document.querySelector('woby-router')
+    if (el) (el as any)[SYMBOL_CONTEXT_WRAP] = (fn: () => void) => context({ [stateSymbol]: stateValue }, fn)
+  })
 
   route().path //do not remove, to trigger content changes
 

@@ -29,8 +29,7 @@ const Link = defaults(def, (props): JSX.Element => {
     replace,
     state,
     title,
-    children,
-    ...restProps
+    children
   } = props
 
   // Get navigate directly from State context (bypassing useNavigate hook which has issues)

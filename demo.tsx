@@ -2,10 +2,49 @@ import { render, $$, useMemo, customElement, defaults, createContext, useContext
 import { Router, Route, Link, useLocation, useNavigate, useParams, useIsActive } from './src'
 import './src/input.css'
 
-useEffect(()=>{
-    const loc = useLocation()
-    console.log('[useEffect] useLocation():', loc)
+// ─── TEST CONTEXT HOOK PATTERN (from TestContextHook.html.tsx) ──────────────
+const readerContext = createContext<string>()
+const otherContext = createContext<string>()
+customElement('reader-context', readerContext.Provider)
+customElement('other-context', otherContext.Provider)
+
+const Reader = defaults(() => ({}), (props) => {
+    const ctx = useContext(readerContext)
+    const oth = useContext(otherContext)
+    
+    console.log('[TestReader] useContext values:', { ctx: $$(ctx), oth: $$(oth) })
+    console.log('[TestReader] SYMBOL_JSX in props:', SYMBOL_JSX in props)
+    
+    return <p>{$$(ctx)} other: {$$(oth)}</p>
 })
+
+customElement('test-reader', Reader)
+
+// Programmatically change other-context value after mount
+useEffect(() => {
+    setTimeout(() => {
+        const otherContextEl = document.querySelector('other-context')
+        if (otherContextEl) {
+            console.log('[Test] Changing other-context value to 456')
+            otherContextEl.setAttribute('value', '456')
+            
+            // Log test results
+            const testLog = document.getElementById('test-log')
+            if (testLog) {
+                const readers = document.querySelectorAll('test-reader')
+                const results: string[] = []
+                readers.forEach((el, idx) => {
+                    const shadowRoot = (el as any).shadowRoot
+                    if (shadowRoot) {
+                        const text = shadowRoot.textContent?.trim()
+                        results.push(`Reader ${idx}: ${text}`)
+                    }
+                })
+                testLog.textContent = results.join('\n') + '\n\nExpected all readers to show "outer other: 123" or "inner other: 123"'
+            }
+        }
+    }, 1000)
+}, [])
 // Define sample pages/components
 const Home = () => (
     <div className="space-y-4">
@@ -139,7 +178,7 @@ const App = () => {
                             <Link to="/user/john"><Button>User Profile</Button></Link>
                         </nav>
 
-                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[200px]">
+                        <div className="content bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[200px]">
                             <Route />
                         </div>
                     </div>

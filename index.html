@@ -31,6 +31,25 @@
 
     <div id="app">Loading...</div>
 
+    <!-- Test Context Hook HTML Pattern -->
+    <h3>Context - Hook in HTML</h3>
+    <other-context value="123">
+        <reader-context value="outer">
+            <p>header</p>
+            <test-reader></test-reader>
+            <reader-context value="inner">
+                <test-reader></test-reader>
+            </reader-context>
+            <test-reader></test-reader>
+            <p>Footer</p>
+        </reader-context>
+    </other-context>
+
+    <div id="test-output" style="border: 2px solid red; padding: 10px; margin-top: 20px;">
+        <h4>Test Output:</h4>
+        <pre id="test-log"></pre>
+    </div>
+
     <script type="module" src="./demo.tsx"></script>
 
     <!-- Custom elements test script -->
