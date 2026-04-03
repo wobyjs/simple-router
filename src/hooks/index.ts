@@ -9,7 +9,8 @@ import useRoute from '../hooks/use_route'
 import useRouter from '../hooks/use_router'
 import useSearchParams from '../hooks/use_search_params'
 import useState from '../hooks/use_state'
+import useIsActive from '../hooks/use_is_active'
 
 /* EXPORT */
 
-export { useLoader, useLocation, useNavigate, useParams, useRoute, useRouter, useSearchParams, useState }
+export { useLoader, useLocation, useNavigate, useParams, useRoute, useRouter, useSearchParams, useState, useIsActive }

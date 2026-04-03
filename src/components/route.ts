@@ -18,16 +18,11 @@ const Route = defaults(def, (_props): JSX.Element => {
   // This creates a computed observable that tracks route changes
   return useMemo((): JSX.Element => {
     const routeValue = route ? $$(route) : undefined
-    // Return null for empty/fallback routes (no path means FALLBACK_ROUTE with throwing to())
+
     if (!routeValue || !routeValue.to || !routeValue.path) {
       return null
     }
-    try {
-      const component = $$(routeValue.to)
-      return component as any
-    } catch (e) {
-      return null
-    }
+    return $$(routeValue.to)
   })
 
 })

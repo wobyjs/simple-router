@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import { useMemo, $$ } from 'woby'
 import useState from '../hooks/use_state'
 import type { RouterLocation } from '../types'
 
@@ -15,10 +16,7 @@ const useLocation = (): RouterLocation => {
         return { pathname: '/', search: '', hash: '' } as any
     }
 
-    const { pathname, search, hash } = state
-
-    return { pathname, search, hash }
-
+    return { pathname: useMemo(() => $$($$(state).pathname)), search: useMemo(() => $$($$(state).search)), hash: useMemo(() => $$($$(state).hash)) }
 }
 
 /* EXPORT */

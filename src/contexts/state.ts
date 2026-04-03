@@ -8,6 +8,9 @@ import type { RouterState } from '../types'
 
 const State = createContext<RouterState>()
 
+// DO NOT register State.Provider as a custom element - this breaks context propagation
+// customElement('state-provider', State.Provider)
+
 /* EXPORT */
 
 export default State

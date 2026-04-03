@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import { useMemo, $$ } from 'woby'
 import useState from '../hooks/use_state'
 import type { OR, RouterParams } from '../types'
 
@@ -9,7 +10,7 @@ import type { OR, RouterParams } from '../types'
 const useParams = (): OR<RouterParams> => {
 
     const state = useState()
-    return state?.params
+    return useMemo(()=> $$($$(state)?.params))
 
 }
 

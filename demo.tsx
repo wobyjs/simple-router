@@ -1,46 +1,53 @@
-import { render, $ } from 'woby'
-import { Router, Route, Link, useLocation, useNavigate, useParams } from './src'
+import { render, $$, useMemo, customElement, defaults, createContext, useContext, useEffect, type JSX, SYMBOL_JSX } from 'woby'
+import { Router, Route, Link, useLocation, useNavigate, useParams, useIsActive } from './src'
+import './src/input.css'
 
+useEffect(()=>{
+    const loc = useLocation()
+    console.log('[useEffect] useLocation():', loc)
+})
 // Define sample pages/components
 const Home = () => (
-    <div>
-        <h2>Home Page</h2>
-        <p>Welcome to the home page!</p>
-        <p>Current path: {useLocation().pathname}</p>
+    <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800">Home Page</h2>
+        <p className="text-gray-600">Welcome to the home page!</p>
+        <p className="text-sm text-gray-500 bg-gray-100 p-3 rounded-md">Current path: {()=>$$(useLocation().pathname)}</p>
     </div>
 )
 
 const About = () => (
-    <div>
-        <h2>About Page</h2>
-        <p>This is the about page.</p>
-        <p>Current path: {useLocation().pathname}</p>
+    <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800">About Page</h2>
+        <p className="text-gray-600">This is the about page.</p>
+        <p className="text-sm text-gray-500 bg-gray-100 p-3 rounded-md">Current path: {()=>$$(useLocation().pathname)}</p>
     </div>
 )
 
 const Contact = () => (
-    <div>
-        <h2>Contact Page</h2>
-        <p>You can reach us here.</p>
-        <p>Current path: {useLocation().pathname}</p>
+    <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-gray-800">Contact Page</h2>
+        <p className="text-gray-600">You can reach us here.</p>
+        <p className="text-sm text-gray-500 bg-gray-100 p-3 rounded-md">Current path: {$$(useLocation().pathname)}</p>
     </div>
 )
 
 const NotFound = () => (
-    <div>
-        <h2>404 - Page Not Found</h2>
-        <p>The page you're looking for doesn't exist.</p>
-        <Link to="/">Go back home</Link>
+    <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-red-600">404 - Page Not Found</h2>
+        <p className="text-gray-600">The page you're looking for doesn't exist.</p>
+        <Link to="/" className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Go back home</Link>
     </div>
 )
 
 const UserProfile = () => {
     const params = useParams()
     return (
-        <div>
-            <h2>User Profile</h2>
-            <p>Username: {params.username}</p>
-            <p>Current path: {useLocation().pathname}</p>
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold text-gray-800">User Profile</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-lg"><span className="font-medium text-gray-700">Username:</span> <span className="text-blue-600 font-semibold">{$$(params.username)}</span></p>
+            </div>
+            <p className="text-sm text-gray-500 bg-gray-100 p-3 rounded-md">Current path: {$$(useLocation().pathname)}</p>
         </div>
     )
 }
@@ -48,35 +55,64 @@ const UserProfile = () => {
 const Products = () => {
     const navigate = useNavigate()
     return (
-        <div>
-            <h2>Products Page</h2>
-            <p>Browse our products.</p>
-            <p>Current path: {useLocation().pathname}</p>
-            <button onclick={() => navigate('/')}>Go to Home</button>
+        <div className="space-y-4">
+            <h2 className="text-2xl font-semibold text-gray-800">Products Page</h2>
+            <p className="text-gray-600">Browse our products.</p>
+            <p className="text-sm text-gray-500 bg-gray-100 p-3 rounded-md">Current path: {$$(useLocation().pathname)}</p>
+            <button onClick={() => navigate('/')} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors">Go to Home</button>
         </div>
     )
 }
 
-// Navigation helper component to highlight active links
-const ActiveLink = ({ to, children }) => {
-    const location = useLocation()
+// Navigation helper custom element to highlight active links
+const defButton = () => ({})
+const ButtonComponent = defaults(defButton, (props): JSX.Element => {
+    const isActive = useIsActive()
+    // if(!(SYMBOL_JSX in props))
+    console.log('[ButtonComponent] SYMBOL_JSX', SYMBOL_JSX in props)
 
-    return (
-        <Link
-            to={to}
-            style={{
-                textDecoration: 'none',
-                marginRight: '1rem',
-                backgroundColor: () => location.pathname() === to ? '#007bff' : 'transparent',
-                color: () => location.pathname() === to ? 'white' : '#333',
-                padding: '0.5rem',
-                borderRadius: '4px'
-            }}
-        >
-            {children}
-        </Link>
-    )
+    return <span class={[() => $$(isActive) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200', 'inline-block px-3 py-2 rounded']}>
+        {props.children}
+    </span>
+})
+
+// Register as custom element
+customElement('active-button', ButtonComponent)
+
+// Type augmentation for JSX support
+declare module 'woby' {
+    namespace JSX {
+        interface IntrinsicElements {
+            'active-button': any
+        }
+    }
 }
+
+const Button = ButtonComponent
+
+
+// ─── CONTEXT DIAGNOSTIC (embedded from TestContextHook.tsx pattern) ───────────
+// A known-working woby context test embedded here to compare with router context.
+// If this works but router context doesn't, the problem is router-specific.
+const DiagContext = createContext<string>()
+
+const DiagReader = () => {
+    const val = useContext(DiagContext)
+    console.log('[DiagReader] useContext(DiagContext):', val, 'type:', typeof val)
+    return <p style="margin:2px 0">DiagContext value: <b>{val ?? '❌ undefined'}</b></p>
+}
+
+const RouterStateReader = () => {
+    const loc = useLocation()
+    const pn = loc?.pathname
+    console.log('[RouterStateReader] useLocation():', loc)
+    console.log('[RouterStateReader] pathname:', pn, 'type:', typeof pn)
+    const val = pn ? $$(pn) : undefined
+    console.log('[RouterStateReader] $$(pathname):', val)
+    return <p style="margin:2px 0">Router pathname: <b>{val ?? '❌ undefined/empty'}</b></p>
+}
+
+// ─── END CONTEXT DIAGNOSTIC ──────────────────────────────────────────────────
 
 // Main App component
 const App = () => {
@@ -90,36 +126,28 @@ const App = () => {
     ]
 
     return (
-        <div>
-            <h1>Simple Router Demo</h1>
-            <Router routes={routes}>
-                <div>
-                    <nav>
-                        <ActiveLink to="/">Home</ActiveLink>
-                        <ActiveLink to="/about">About</ActiveLink>
-                        <ActiveLink to="/contact">Contact</ActiveLink>
-                        <ActiveLink to="/products">Products</ActiveLink>
-                        <ActiveLink to="/user/john">User Profile</ActiveLink>
-                    </nav>
+        <div className="min-h-screen bg-gray-50">
+            <div className="container mx-auto px-4 py-8">
+                <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Simple Router Demo</h1>
+                <Router routes={routes}>
+                    <div>
+                        <nav className="bg-white shadow-md rounded-lg p-4 mb-6">
+                            <Link to="/"><Button>Home</Button></Link>
+                            <Link to="/about"><Button>About</Button></Link>
+                            <Link to="/contact"><Button>Contact</Button></Link>
+                            <Link to="/products"><Button>Products</Button></Link>
+                            <Link to="/user/john"><Button>User Profile</Button></Link>
+                        </nav>
 
-                    <div className="content" style={{
-                        padding: '1rem',
-                        border: '1px solid #eee',
-                        minHeight: '200px',
-                        marginTop: '1rem'
-                    }}>
-                        <Route />
+                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 min-h-[200px]">
+                            <Route />
+                        </div>
                     </div>
-                </div>
-            </Router>
+                </Router>
 
-            <div className="footer" style={{
-                marginTop: '2rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid #eee',
-                color: '#666'
-            }}>
-                <p>Simple Router Demo - A lightweight isomorphic router for Woby</p>
+                <footer className="mt-8 pt-6 border-t border-gray-300 text-gray-600 text-center">
+                    <p>Simple Router Demo - A lightweight isomorphic router for Woby</p>
+                </footer>
             </div>
         </div>
     )
@@ -248,42 +276,43 @@ const renderApp = () => {
         render(<App />, appElement)
 
         // Add test button after render
-        setTimeout(() => {
-            const testButton = document.createElement('button')
-            testButton.textContent = '🧪 Run Self-Test (Check Console)'
-            testButton.style.cssText = `
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                padding: 12px 20px;
-                background: #007bff;
-                color: white;
-                border: none;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 14px;
-                font-weight: bold;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-                z-index: 9999;
-            `
-            testButton.onmouseover = () => testButton.style.background = '#0056b3'
-            testButton.onmouseout = () => testButton.style.background = '#007bff'
-            testButton.onclick = () => {
-                console.clear()
-                runSelfTest()
-            }
-            document.body.appendChild(testButton)
+        // COMMENTED OUT TO AVOID INTERFERING WITH MANUAL TESTING
+        // setTimeout(() => {
+        //     const testButton = document.createElement('button')
+        //     testButton.textContent = '🧪 Run Self-Test (Check Console)'
+        //     testButton.style.cssText = `
+        //         position: fixed;
+        //         top: 10px;
+        //         right: 10px;
+        //         padding: 12px 20px;
+        //         background: #007bff;
+        //         color: white;
+        //         border: none;
+        //         border-radius: 6px;
+        //         cursor: pointer;
+        //         font-size: 14px;
+        //         font-weight: bold;
+        //         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        //         z-index: 9999;
+        //     `
+        //     testButton.onmouseover = () => testButton.style.background = '#0056b3'
+        //     testButton.onmouseout = () => testButton.style.background = '#007bff'
+        //     testButton.onclick = () => {
+        //         console.clear()
+        //         runSelfTest()
+        //     }
+        //     document.body.appendChild(testButton)
 
-            console.log('%cWelcome to Simple Router Demo!', 'background: #4caf50; color: white; font-size: 14px; padding: 5px;')
-            console.log('%cAuto-running self-test in 2 seconds... (disable by removing auto-click in demo.tsx)', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
-            console.log('%cOr manually click the navigation links above to test routing interactively.', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
+        //     console.log('%cWelcome to Simple Router Demo!', 'background: #4caf50; color: white; font-size: 14px; padding: 5px;')
+        //     console.log('%cAuto-running self-test in 2 seconds... (disable by removing auto-click in demo.tsx)', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
+        //     console.log('%cOr manually click the navigation links above to test routing interactively.', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
 
-            // Auto-run self-test after 2 seconds
-            setTimeout(() => {
-                console.clear()
-                testButton.click()
-            }, 2000)
-        }, 100)
+        //     // Auto-run self-test after 2 seconds
+        //     setTimeout(() => {
+        //         console.clear()
+        //         testButton.click()
+        //     }, 2000)
+        // }, 100)
     } else {
         console.error('App element not found!')
     }
@@ -303,6 +332,7 @@ const renderApp = () => {
     }
 }
 
+// Call renderApp when 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', renderApp)
 } else {

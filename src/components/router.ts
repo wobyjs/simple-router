@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { $, $$, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, context, setPendingContextWrap } from 'woby'
+import { $, $$, untrack, useMemo, useResource, customElement, type ElementAttributes, HtmlString, type JSX, useEffect, resolve } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import getBackend from '../backends/backend'
@@ -21,7 +21,6 @@ const def = () => ({
 })
 
 const Router = defaults(def, (props): JSX.Element => {
-
   const [location, navigate] = getBackend($$(props.backend) || 'path', $$(props.path))
 
   const pathname = useMemo(() => {
@@ -80,24 +79,23 @@ const Router = defaults(def, (props): JSX.Element => {
     return result
   })
 
-  // Provide context for descendant custom elements
-  // Children rendered within context() can reactively track observables
+  // Provide context for all descendants using State.Provider
   const stateValue = { pathname, search, hash, navigate, params, searchParams, route, loader }
 
   route().path //do not remove, to trigger content changes
 
-  setPendingContextWrap((fn: () => void) => context({ [State.symbol]: stateValue }, fn))
-
-  return context({ [State.symbol]: stateValue }, () => {
-    const children = props.children
-    const result = typeof children === 'function' ? children() : children
-    return result
+  // Provide context for all descendants using State.Provider
+  return State.Provider({
+    value: stateValue, children: () => {
+      const children = props.children
+      return resolve($$(children))
+    }
   })
 
 })
 
 // Register as custom element
-customElement('woby-router', Router)
+customElement('woby-router', Router as any)
 
 // Type augmentation for JSX support
 declare module 'woby' {

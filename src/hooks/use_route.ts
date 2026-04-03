@@ -1,17 +1,16 @@
 
 /* IMPORT */
 
+import { useMemo, $$ } from 'woby'
 import useState from '../hooks/use_state'
 import type { OR, RouterRoute } from '../types'
 
 /* MAIN */
 
 const useRoute = (): OR<RouterRoute> => {
-
     const state = useState()
 
-    const route = state?.route
-    return route
+    return useMemo(() => $$($$(state)?.route))
 
 }
 

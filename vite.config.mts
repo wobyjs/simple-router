@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import path from 'path'
+import tailwindcss from '@tailwindcss/vite'
 // import dts from 'vite-plugin-dts'
 // import svgr from "vite-plugin-svgr"
 
@@ -31,6 +32,7 @@ const config = defineConfig({
         jsx: 'automatic',
     },
     plugins: [
+        tailwindcss(),
         // // svgLoader({ defaultImport: 'component' }),
         // svgr({
         //     // Set it to `true` to export React component as default.

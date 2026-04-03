@@ -1,14 +1,17 @@
 
 /* IMPORT */
 
-import { $, $$, jsx, customElement, type ElementAttributes, HtmlString, HtmlBoolean, HtmlStyle, type JSX, useMemo, useEffect } from 'woby'
+import { $, $$, customElement, type ElementAttributes, HtmlString, HtmlBoolean, type JSX, useMemo, useEffect, createContext, useContext } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
-import useNavigate from '../hooks/use_navigate'
 import useLocation from '../hooks/use_location'
+import State from '../contexts/state'
 import type { RouterPath } from '../types'
 
 /* MAIN */
+
+// Create context for active state
+export const LinkContext = createContext<boolean>(false)
 
 // Define default props function - required for custom elements
 const def = () => {
@@ -17,7 +20,6 @@ const def = () => {
     replace: $(false, HtmlBoolean) as ObservableMaybe<boolean> | undefined,
     state: $(undefined as any) as ObservableMaybe<any> | undefined,
     title: $('', HtmlString) as ObservableMaybe<string> | undefined,
-    style: $('', HtmlStyle) as ObservableMaybe<JSX.Style> | undefined
   }
 }
 
@@ -27,21 +29,16 @@ const Link = defaults(def, (props): JSX.Element => {
     replace,
     state,
     title,
-    style,
-    children
+    children,
+    ...restProps
   } = props
 
-  const navigate = useNavigate()
+  // Get navigate directly from State context (bypassing useNavigate hook which has issues)
+  const stateContext = useContext(State) as any
+  const unwrappedState = $$(stateContext)
+  const navigateFromState = unwrappedState?.navigate
+  
   const location = useLocation()
-
-  const onClick = (event: MouseEvent): void => {
-    event.preventDefault()
-    if (navigate) {
-      navigate($$(to), { replace: $$(replace), state: $$(state) })
-    } else {
-      window.location.href = $$(to)
-    }
-  }
 
   // Compute active state reactively - compare unwrapped pathnames
   const isActive = useMemo(() => {
@@ -49,23 +46,6 @@ const Link = defaults(def, (props): JSX.Element => {
     const toPath = $$(to)
     const active = locPathname === toPath
     return active
-  })
-
-  // Merge user-provided style with active state styling
-  // Each reactive property calls isActive() inside its function to track location changes
-  const computedStyle = useMemo(() => {
-    const userStyleObj = typeof $$(style) === 'object' ? ($$(style) as Record<string, any>) : {}
-    return {
-      ...userStyleObj,
-      backgroundColor: () => {
-        const active = $$(isActive)
-        return active ? '#007bff' : (userStyleObj['backgroundColor'] || 'transparent')
-      },
-      color: () => {
-        const active = $$(isActive)
-        return active ? 'white' : (userStyleObj['color'] || '#333')
-      }
-    } as JSX.Style
   })
 
   // Sync active class to the custom element host
@@ -88,8 +68,46 @@ const Link = defaults(def, (props): JSX.Element => {
     }
   })
 
-  return jsx('a', { href: to, title: title, style: computedStyle, onClick, children })
+  // Manually attach click handler to prevent default navigation
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    const nav = navigateFromState
+    
+    const anchorEl = document.querySelector(`a[href="${$$(to)}"]`)
+    if (!anchorEl) return
+    
+    const handleClickDirect = (event: MouseEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      
+      if (nav) {
+        nav($$(to), { replace: $$(replace), state: $$(state) })
+      }
+    }
+    
+    anchorEl.addEventListener('click', handleClickDirect as EventListener)
+    
+    return () => {
+      anchorEl.removeEventListener('click', handleClickDirect as EventListener)
+    }
+  })
 
+  // Create click handler that prevents default navigation
+  const handleClick = (event: MouseEvent): void => {
+    event.preventDefault()
+    event.stopPropagation()
+    
+    if (navigateFromState) {
+      navigateFromState($$(to), { replace: $$(replace), state: $$(state) })
+    }
+  }
+
+  return (
+    <LinkContext.Provider value={isActive}>
+      <a href={$$(to)} title={title} onClick={handleClick}>{children}</a>
+    </LinkContext.Provider>
+  )
 })
 
 // Register as custom element

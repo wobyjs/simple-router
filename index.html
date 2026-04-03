@@ -6,66 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple Router Demo</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
-
-        nav {
-            background-color: #f4f4f4;
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        nav a {
-            margin-right: 1rem;
-            text-decoration: none;
-            color: #333;
-            padding: 0.5rem;
-            border-radius: 4px;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-        }
-
-        .active {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .content {
-            padding: 1rem;
-            border: 1px solid #eee;
-            min-height: 200px;
-        }
-
-        .footer {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
-            color: #666;
-        }
-
-        /* Custom element styles */
-        woby-link {
-            margin-right: 1rem;
-            text-decoration: none;
-            color: #333;
-            padding: 0.5rem;
-            border-radius: 4px;
-        }
-
-        woby-link:hover {
-            background-color: #ddd;
-        }
-
-        .active-link {
-            background-color: #007bff;
-            color: white;
-        }
+        /* Minimal fallback styles - removed, using Tailwind CSS */
     </style>
 </head>
 
@@ -75,12 +16,12 @@
     <!-- Custom Elements Usage -->
     <h2>Custom Elements Demo</h2>
     <woby-router id="custom-router">
-        <nav>
-            <woby-link to="/" id="home-link">Home</woby-link>
-            <woby-link to="/about" id="about-link">About</woby-link>
-            <woby-link to="/contact" id="contact-link">Contact</woby-link>
-            <woby-link to="/products" id="products-link">Products</woby-link>
-            <woby-link to="/user/john" id="user-link">User Profile</woby-link>
+        <nav class="bg-white shadow-md rounded-lg p-4 mb-6">
+            <woby-link to="/" id="home-link"><active-button >Home</active-button></woby-link>
+            <woby-link to="/about" id="about-link"><active-button >About</active-button></woby-link>
+            <woby-link to="/contact" id="contact-link"><active-button >Contact</active-button></woby-link>
+            <woby-link to="/products" id="products-link"><active-button >Products</active-button></woby-link>
+            <woby-link to="/user/john" id="user-link"><active-button >User Profile</active-button></woby-link>
         </nav>
 
         <div class="content">
@@ -93,36 +34,7 @@
     <script type="module" src="./demo.tsx"></script>
 
     <!-- Custom elements test script -->
-    <script type="module">
-        // Wait for custom elements to be defined
-        Promise.all([
-            customElements.whenDefined('woby-link'),
-            customElements.whenDefined('woby-router'),
-            customElements.whenDefined('woby-route')
-        ]).then(() => {
-            console.log('Custom elements are ready!');
-
-            // Add click event listeners for active state
-            const links = document.querySelectorAll('woby-link');
-            links.forEach(link => {
-                link.addEventListener('click', function () {
-                    // Remove active class from all links
-                    links.forEach(l => l.classList.remove('active-link'));
-                    // Add active class to clicked link
-                    this.classList.add('active-link');
-                });
-            });
-
-            // Set initial active link based on current location
-            const currentPath = window.location.pathname;
-            const activeLink = document.querySelector(`woby-link[to="${currentPath}"]`);
-            if (activeLink) {
-                activeLink.classList.add('active-link');
-            }
-        }).catch(err => {
-            console.error('Failed to load custom elements:', err);
-        });
-    </script>
+ 
 </body>
 
 </html>
