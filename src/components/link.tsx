@@ -1,11 +1,11 @@
 
 /* IMPORT */
 
-import { $, $$, customElement, type ElementAttributes, HtmlString, HtmlBoolean, type JSX, useMemo, useEffect, createContext, useContext } from 'woby'
+import { $, $$, customElement, type ElementAttributes, HtmlString, HtmlBoolean, type JSX, useMemo, createContext, useContext } from 'woby'
 import { defaults } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import useLocation from '../hooks/use_location'
-import State from '../contexts/state'
+import State, { routerState$ } from '../contexts/state'
 import type { RouterPath } from '../types'
 
 /* MAIN */
@@ -32,81 +32,37 @@ const Link = defaults(def, (props): JSX.Element => {
     children
   } = props
 
-  // Get navigate directly from State context (bypassing useNavigate hook which has issues)
-  const stateContext = useContext(State) as any
-  const unwrappedState = $$(stateContext)
-  const navigateFromState = unwrappedState?.navigate
-  
+  // useContext(State) works for TSX usage; falls back to routerState$ for custom element
+  // (same timing issue as woby-route: child constructs before parent sets context)
+  const ctxState = useContext(State)
+  const navigate = useMemo(() => {
+    const state = $$(ctxState) ?? $$(routerState$)
+    return state?.navigate
+  })
+
   const location = useLocation()
 
-  // Compute active state reactively - compare unwrapped pathnames
+  // Compute active state reactively
   const isActive = useMemo(() => {
     const locPathname = $$(location.pathname)
     const toPath = $$(to)
-    const active = locPathname === toPath
-    return active
+    return locPathname === toPath
   })
 
-  // Sync active class to the custom element host
-  useEffect(() => {
-    const active = isActive()
-
-    // Find the host custom element by querying for it
-    // Since we're inside shadow DOM, we need to find our way back to the host
-    const anchorEl = (typeof window !== 'undefined') ? document.querySelector(`a[href="${$$(to)}"]`) : null
-    const hostEl = anchorEl?.getRootNode() instanceof ShadowRoot
-      ? (anchorEl.getRootNode() as ShadowRoot).host
-      : null
-
-    if (hostEl) {
-      if (active) {
-        hostEl.classList.add('active-link')
-      } else {
-        hostEl.classList.remove('active-link')
-      }
-    }
-  })
-
-  // Manually attach click handler to prevent default navigation
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    
-    const nav = navigateFromState
-    
-    const anchorEl = document.querySelector(`a[href="${$$(to)}"]`)
-    if (!anchorEl) return
-    
-    const handleClickDirect = (event: MouseEvent) => {
+  return useMemo((): JSX.Element => {
+    const toValue = $$(to)
+    const handleClickMemo = (event: MouseEvent): void => {
       event.preventDefault()
-      event.stopPropagation()
-      
-      if (nav) {
-        nav($$(to), { replace: $$(replace), state: $$(state) })
-      }
+      const nav = $$(navigate)
+      if (nav) nav(toValue, { replace: $$(replace), state: $$(state) })
     }
-    
-    anchorEl.addEventListener('click', handleClickDirect as EventListener)
-    
-    return () => {
-      anchorEl.removeEventListener('click', handleClickDirect as EventListener)
-    }
+
+    return (
+      <LinkContext.Provider value={isActive}>
+        <a href={toValue} title={$$(title)} onClick={handleClickMemo}>{children}</a>
+      </LinkContext.Provider>
+    )
   })
-
-  // Create click handler that prevents default navigation
-  const handleClick = (event: MouseEvent): void => {
-    event.preventDefault()
-    event.stopPropagation()
-    
-    if (navigateFromState) {
-      navigateFromState($$(to), { replace: $$(replace), state: $$(state) })
-    }
-  }
-
-  return (
-    <LinkContext.Provider value={isActive}>
-      <a href={$$(to)} title={title} onClick={handleClick}>{children}</a>
-    </LinkContext.Provider>
-  )
 })
 
 // Register as custom element

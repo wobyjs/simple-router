@@ -1,28 +1,31 @@
 
 /* IMPORT */
 
-import { useContext } from 'woby'
-import State from '../contexts/state'
+import { $$, useContext, useMemo } from 'woby'
+import State, { routerState$ } from '../contexts/state'
 import type { RouterState } from '../types'
 
 /* MAIN */
 
 const useState = (): RouterState => {
-    const state = useContext(State) //as Observable< RouterState> 
+    const ctxState = useContext(State)
 
-    if (!state) {
-        // Context not available yet during custom element initialization
-        // Component will re-render once connected to DOM and context provider exists
-        console.warn('[useState] Context not available - returning undefined')
-        return undefined as any
-    }
+    // For TSX usage, useContext(State) returns the state directly.
+    // For custom elements (woby-route shadow DOM), useContext returns undefined
+    // due to the timing issue — fall back to the module-level routerState$.
+    if (ctxState) return ctxState
 
-    // Unwrap the state observable with $$() to get the actual value
-    return (state)
-    // console.warn('[useState] isObservable', isObservable($$(state)))
-    // const unwrappedState = $$(state)
-    // return unwrappedState
-
+    // Return a reactive proxy that always reads from routerState$
+    return {
+        pathname: useMemo(() => $$($$(routerState$)?.pathname)),
+        search: useMemo(() => $$($$(routerState$)?.search)),
+        hash: useMemo(() => $$($$(routerState$)?.hash)),
+        navigate: (path: any, options?: any) => $$(routerState$)?.navigate?.(path, options),
+        params: useMemo(() => $$($$(routerState$)?.params)),
+        searchParams: useMemo(() => $$($$(routerState$)?.searchParams)),
+        route: useMemo(() => $$($$(routerState$)?.route)),
+        loader: useMemo(() => $$($$(routerState$)?.loader)),
+    } as RouterState
 }
 
 /* EXPORT */
