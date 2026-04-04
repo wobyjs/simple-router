@@ -1,7 +1,7 @@
 
 /* IMPORT */
 
-import { untrack } from 'woby'
+import { untrack, $$ } from 'woby'
 import useState from '../hooks/use_state'
 import type { Resource } from '../types'
 
@@ -10,7 +10,10 @@ import type { Resource } from '../types'
 const useLoader = <T = unknown>(): Resource<T> => {
 
     const state = useState()
-    return state ? untrack(state.loader) : undefined
+    if (!state) return undefined as any
+    // Unwrap state first, then access loader (which is already an OR<Resource>)
+    // Use untrack to avoid re-triggering when loader changes
+    return untrack(() => $$($$(state).loader))
 
 }
 

@@ -92,6 +92,7 @@ const UserProfile = () => {
 }
 
 const Products = () => {
+    console.log('[Products] rendering')
     const navigate = useNavigate()
     return (
         <div className="space-y-4">

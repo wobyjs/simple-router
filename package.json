@@ -2,7 +2,7 @@
     "name": "@woby/simple-router",
     "repository": "github:wobyjs/simple-router",
     "description": "A simple isomorphic router for Voby.",
-    "version": "1.4.25",
+    "version": "1.4.27",
     "publishConfig": {
         "access": "public"
     },

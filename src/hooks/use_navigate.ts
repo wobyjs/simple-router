@@ -1,17 +1,18 @@
 
 /* IMPORT */
 
+import { $$ } from 'woby'
 import useState from '../hooks/use_state'
-import type { RouterNavigate } from '../types'
+import type { RouterNavigate, RouterNavigateOptions, RouterPath } from '../types'
 
 /* MAIN */
 
-const useNavigate = (): RouterNavigate => {
+const useNavigate = () =>
+    (path: RouterPath, options?: RouterNavigateOptions) => {
+        const state = useState()
+        return $$(state)?.navigate(path, options)
 
-    const state = useState()
-    return state?.navigate
-
-}
+    }
 
 /* EXPORT */
 

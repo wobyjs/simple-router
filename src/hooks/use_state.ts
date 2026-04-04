@@ -1,9 +1,9 @@
 
 /* IMPORT */
 
-import { $$, useContext, useMemo } from 'woby'
+import { $$, useContext } from 'woby'
 import State, { routerState$ } from '../contexts/state'
-import type { RouterState } from '../types'
+import type { RouterNavigate, RouterState } from '../types'
 
 /* MAIN */
 
@@ -15,17 +15,20 @@ const useState = (): RouterState => {
     // due to the timing issue — fall back to the module-level routerState$.
     if (ctxState) return ctxState
 
-    // Return a reactive proxy that always reads from routerState$
-    return {
-        pathname: useMemo(() => $$($$(routerState$)?.pathname)),
-        search: useMemo(() => $$($$(routerState$)?.search)),
-        hash: useMemo(() => $$($$(routerState$)?.hash)),
-        navigate: (path: any, options?: any) => $$(routerState$)?.navigate?.(path, options),
-        params: useMemo(() => $$($$(routerState$)?.params)),
-        searchParams: useMemo(() => $$($$(routerState$)?.searchParams)),
-        route: useMemo(() => $$($$(routerState$)?.route)),
-        loader: useMemo(() => $$($$(routerState$)?.loader)),
-    } as RouterState
+    // Return a reactive proxy that always reads from routerState$ at call time.
+    // Using plain getter functions (not useMemo) so this is safe to call outside
+    // a reactive scope (e.g. when components are eagerly instantiated in route arrays).
+    const proxy = {
+        get pathname() { return ($$(routerState$)?.pathname ?? (() => '/' as any)) },
+        get search() { return ($$(routerState$)?.search ?? (() => '')) },
+        get hash() { return ($$(routerState$)?.hash ?? (() => '')) },
+        navigate: ((path: any, options?: any) => $$(routerState$)?.navigate?.(path, options)) as RouterNavigate,
+        get params() { return ($$(routerState$)?.params ?? (() => ({} as any))) },
+        get searchParams() { return ($$(routerState$)?.searchParams ?? (() => new URLSearchParams())) },
+        get route() { return ($$(routerState$)?.route ?? (() => ({} as any))) },
+        get loader() { return ($$(routerState$)?.loader ?? (() => undefined as any)) },
+    } as unknown as RouterState
+    return proxy
 }
 
 /* EXPORT */

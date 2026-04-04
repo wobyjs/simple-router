@@ -1,6 +1,7 @@
 
 /* IMPORT */
 
+import { useMemo, $$ } from 'woby'
 import useState from '../hooks/use_state'
 import type { OR } from '../types'
 
@@ -9,7 +10,7 @@ import type { OR } from '../types'
 const useSearchParams = (): OR<URLSearchParams> => {
 
     const state = useState()
-    return state?.searchParams
+    return useMemo(() => $$($$(state)?.searchParams))
 
 }
 
