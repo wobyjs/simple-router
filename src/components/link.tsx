@@ -1,8 +1,8 @@
 
 /* IMPORT */
 
-import { $, $$, customElement, type ElementAttributes, HtmlString, HtmlBoolean, type JSX, useMemo, createContext, useContext } from 'woby'
-import { defaults } from 'woby'
+import { $, $$, customElement, type ElementAttributes, HtmlString, HtmlBoolean, type JSX, useMemo, createContext, useContext, context } from 'woby'
+import { defaults, setPendingContextWrap } from 'woby'
 import type { ObservableMaybe } from 'woby'
 import useLocation from '../hooks/use_location'
 import State, { routerState$ } from '../contexts/state'
@@ -48,6 +48,16 @@ const Link = defaults(def, (props): JSX.Element => {
     const toPath = $$(to)
     return locPathname === toPath
   })
+
+  // For custom elements: expose LinkContext via setPendingContextWrap so light DOM children
+  // (like <active-button>) can collect it via collectAncestorContextWrap
+  // IMPORTANT: Pass the observable itself so consumers can react to changes
+  if (typeof setPendingContextWrap === 'function') {
+    const { symbol } = LinkContext
+    setPendingContextWrap((fn: () => void) => {
+      context({ [symbol]: isActive }, fn)
+    })
+  }
 
   return useMemo((): JSX.Element => {
     const toValue = $$(to)

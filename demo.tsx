@@ -111,6 +111,10 @@ const ButtonComponent = defaults(defButton, (props): JSX.Element => {
     // if(!(SYMBOL_JSX in props))
     console.log('[ButtonComponent] SYMBOL_JSX', SYMBOL_JSX in props)
 
+    useEffect(()=>{
+        console.log('[ButtonComponent] isActive', $$(isActive), props.children)
+    })
+
     return <span class={[() => $$(isActive) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200', 'inline-block px-3 py-2 rounded']}>
         {props.children}
     </span>
@@ -168,7 +172,7 @@ const App = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Simple Router Demo</h1>
+                <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Simple Router Demo (TSX)</h1>
                 <Router routes={routes}>
                     <div>
                         <nav className="bg-white shadow-md rounded-lg p-4 mb-6">
