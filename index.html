@@ -47,8 +47,38 @@
 
     <script type="module" src="./demo.tsx"></script>
 
-    <!-- Custom elements test script -->
- 
+    <!-- Custom elements test script - configure routes for woby-router -->
+    <script type="module">
+        import { Home, About, Contact, Products, UserProfile, NotFound } from './demo.tsx';
+        
+        // Wait for custom elements to be defined
+        Promise.all([
+            customElements.whenDefined('woby-link'),
+            customElements.whenDefined('woby-router'),
+            customElements.whenDefined('woby-route'),
+            customElements.whenDefined('active-button')
+        ]).then(() => {
+            console.log('Custom elements are ready!');
+            
+            // Set routes on the custom element woby-router
+            const customRouter = document.getElementById('custom-router');
+            if (customRouter && customRouter.props && customRouter.props.routes) {
+                customRouter.props.routes([
+                    { path: '/', to: Home },
+                    { path: '/about', to: About },
+                    { path: '/contact', to: Contact },
+                    { path: '/products', to: Products },
+                    { path: '/user/:username', to: UserProfile },
+                    { path: '/404', to: NotFound }
+                ]);
+                console.log('Routes configured on woby-router');
+            } else {
+                console.warn('woby-router not found or missing props.routes');
+            }
+        }).catch(err => {
+            console.error('Failed to load custom elements:', err);
+        });
+    </script>
 </body>
 
 </html>

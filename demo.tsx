@@ -12,9 +12,6 @@ const Reader = defaults(() => ({}), (props) => {
     const ctx = useContext(readerContext)
     const oth = useContext(otherContext)
     
-    console.log('[TestReader] useContext values:', { ctx: $$(ctx), oth: $$(oth) })
-    console.log('[TestReader] SYMBOL_JSX in props:', SYMBOL_JSX in props)
-    
     return <p>{$$(ctx)} other: {$$(oth)}</p>
 })
 
@@ -25,7 +22,6 @@ useEffect(() => {
     setTimeout(() => {
         const otherContextEl = document.querySelector('other-context')
         if (otherContextEl) {
-            console.log('[Test] Changing other-context value to 456')
             otherContextEl.setAttribute('value', '456')
             
             // Log test results
@@ -46,7 +42,7 @@ useEffect(() => {
     }, 1000)
 }, [])
 // Define sample pages/components
-const Home = () => (
+export const Home = () => (
     <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Home Page</h2>
         <p className="text-gray-600">Welcome to the home page!</p>
@@ -54,7 +50,7 @@ const Home = () => (
     </div>
 )
 
-const About = () => (
+export const About = () => (
     <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">About Page</h2>
         <p className="text-gray-600">This is the about page.</p>
@@ -62,7 +58,7 @@ const About = () => (
     </div>
 )
 
-const Contact = () => (
+export const Contact = () => (
     <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-gray-800">Contact Page</h2>
         <p className="text-gray-600">You can reach us here.</p>
@@ -70,7 +66,7 @@ const Contact = () => (
     </div>
 )
 
-const NotFound = () => (
+export const NotFound = () => (
     <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-red-600">404 - Page Not Found</h2>
         <p className="text-gray-600">The page you're looking for doesn't exist.</p>
@@ -78,7 +74,7 @@ const NotFound = () => (
     </div>
 )
 
-const UserProfile = () => {
+export const UserProfile = () => {
     const params = useParams()
     return (
         <div className="space-y-4">
@@ -91,8 +87,7 @@ const UserProfile = () => {
     )
 }
 
-const Products = () => {
-    console.log('[Products] rendering')
+export const Products = () => {
     const navigate = useNavigate()
     return (
         <div className="space-y-4">
@@ -108,12 +103,6 @@ const Products = () => {
 const defButton = () => ({})
 const ButtonComponent = defaults(defButton, (props): JSX.Element => {
     const isActive = useIsActive()
-    // if(!(SYMBOL_JSX in props))
-    console.log('[ButtonComponent] SYMBOL_JSX', SYMBOL_JSX in props)
-
-    useEffect(()=>{
-        console.log('[ButtonComponent] isActive', $$(isActive), props.children)
-    })
 
     return <span class={[() => $$(isActive) ? 'bg-blue-600 text-white' : 'hover:bg-gray-200', 'inline-block px-3 py-2 rounded']}>
         {props.children}
@@ -142,17 +131,13 @@ const DiagContext = createContext<string>()
 
 const DiagReader = () => {
     const val = useContext(DiagContext)
-    console.log('[DiagReader] useContext(DiagContext):', val, 'type:', typeof val)
     return <p style="margin:2px 0">DiagContext value: <b>{val ?? '❌ undefined'}</b></p>
 }
 
 const RouterStateReader = () => {
     const loc = useLocation()
     const pn = loc?.pathname
-    console.log('[RouterStateReader] useLocation():', loc)
-    console.log('[RouterStateReader] pathname:', pn, 'type:', typeof pn)
     const val = pn ? $$(pn) : undefined
-    console.log('[RouterStateReader] $$(pathname):', val)
     return <p style="margin:2px 0">Router pathname: <b>{val ?? '❌ undefined/empty'}</b></p>
 }
 
@@ -321,42 +306,42 @@ const renderApp = () => {
 
         // Add test button after render
         // COMMENTED OUT TO AVOID INTERFERING WITH MANUAL TESTING
-        // setTimeout(() => {
-        //     const testButton = document.createElement('button')
-        //     testButton.textContent = '🧪 Run Self-Test (Check Console)'
-        //     testButton.style.cssText = `
-        //         position: fixed;
-        //         top: 10px;
-        //         right: 10px;
-        //         padding: 12px 20px;
-        //         background: #007bff;
-        //         color: white;
-        //         border: none;
-        //         border-radius: 6px;
-        //         cursor: pointer;
-        //         font-size: 14px;
-        //         font-weight: bold;
-        //         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        //         z-index: 9999;
-        //     `
-        //     testButton.onmouseover = () => testButton.style.background = '#0056b3'
-        //     testButton.onmouseout = () => testButton.style.background = '#007bff'
-        //     testButton.onclick = () => {
-        //         console.clear()
-        //         runSelfTest()
-        //     }
-        //     document.body.appendChild(testButton)
+        setTimeout(() => {
+            const testButton = document.createElement('button')
+            testButton.textContent = '🧪 Run Self-Test (Check Console)'
+            testButton.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                padding: 12px 20px;
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: bold;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                z-index: 9999;
+            `
+            testButton.onmouseover = () => testButton.style.background = '#0056b3'
+            testButton.onmouseout = () => testButton.style.background = '#007bff'
+            testButton.onclick = () => {
+                console.clear()
+                runSelfTest()
+            }
+            document.body.appendChild(testButton)
 
-        //     console.log('%cWelcome to Simple Router Demo!', 'background: #4caf50; color: white; font-size: 14px; padding: 5px;')
-        //     console.log('%cAuto-running self-test in 2 seconds... (disable by removing auto-click in demo.tsx)', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
-        //     console.log('%cOr manually click the navigation links above to test routing interactively.', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
+            console.log('%cWelcome to Simple Router Demo!', 'background: #4caf50; color: white; font-size: 14px; padding: 5px;')
+            console.log('%cAuto-running self-test in 2 seconds... (disable by removing auto-click in demo.tsx)', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
+            console.log('%cOr manually click the navigation links above to test routing interactively.', 'background: #ffeb3b; color: #000; font-size: 13px; padding: 5px;')
 
-        //     // Auto-run self-test after 2 seconds
-        //     setTimeout(() => {
-        //         console.clear()
-        //         testButton.click()
-        //     }, 2000)
-        // }, 100)
+            // Auto-run self-test after 2 seconds
+            setTimeout(() => {
+                console.clear()
+                testButton.click()
+            }, 2000)
+        }, 100)
     } else {
         console.error('App element not found!')
     }

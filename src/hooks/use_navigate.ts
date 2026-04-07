@@ -3,7 +3,7 @@
 
 import { $$ } from 'woby'
 import useState from '../hooks/use_state'
-import type { RouterNavigate, RouterNavigateOptions, RouterPath } from '../types'
+import type { RouterNavigateOptions, RouterPath } from '../types'
 
 /* MAIN */
 
