@@ -346,8 +346,7 @@ const renderApp = () => {
         console.error('App element not found!')
     }
 
-    // Set routes on the custom element woby-router
-    // Routes are shared between the TSX Router and the custom element woby-router
+    // Set routes on the custom element woby-router (only if it exists - for web component variant)
     const customRouter = document.getElementById('custom-router') as any
     if (customRouter?.props?.routes) {
         customRouter.props.routes([
