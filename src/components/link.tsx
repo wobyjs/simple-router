@@ -15,12 +15,14 @@ export const LinkContext = createContext<boolean>(false)
 
 // Define default props function - required for custom elements
 const def = () => {
-  return {
+  const r = {
     to: $('/' as RouterPath as any, HtmlString) as ObservableMaybe<RouterPath> | undefined,
     replace: $(false, HtmlBoolean) as ObservableMaybe<boolean> | undefined,
     state: $(undefined as any) as ObservableMaybe<any> | undefined,
     title: $('', HtmlString) as ObservableMaybe<string> | undefined,
   }
+
+  return r as typeof r & JSX.HTMLAttributes<HTMLAnchorElement>
 }
 
 const Link = defaults(def, (props): JSX.Element => {
@@ -29,8 +31,10 @@ const Link = defaults(def, (props): JSX.Element => {
     replace,
     state,
     title,
-    children
-  } = props
+    children,
+    // Destructure HTML anchor attributes to forward them
+    ...htmlAttrs
+  } = props as typeof props & JSX.HTMLAttributes<HTMLAnchorElement>
 
   // useContext(State) works for TSX usage; falls back to routerState$ for custom element
   // (same timing issue as woby-route: child constructs before parent sets context)
@@ -69,7 +73,7 @@ const Link = defaults(def, (props): JSX.Element => {
 
     return (
       <LinkContext.Provider value={isActive}>
-        <a href={toValue} title={$$(title)} onClick={handleClickMemo}>{children}</a>
+        <a href={toValue} title={$$(title)} onClick={handleClickMemo} {...(htmlAttrs as any)}>{children}</a>
       </LinkContext.Provider>
     )
   })
@@ -82,11 +86,14 @@ customElement('woby-link', Link)
 declare module 'woby' {
   namespace JSX {
     interface IntrinsicElements {
-      'woby-link': ElementAttributes<typeof Link>
+      'woby-link': ElementAttributes<typeof Link> & JSX.HTMLAttributes<HTMLAnchorElement>
     }
   }
 }
 
 /* EXPORT */
 
-export default Link
+// Export Link with proper type that includes HTML anchor attributes
+export default Link as typeof Link & {
+  (props: Parameters<typeof Link>[0] & JSX.HTMLAttributes<HTMLAnchorElement>): JSX.Element
+}

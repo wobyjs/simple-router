@@ -161,7 +161,7 @@ const App = () => {
                 <Router routes={routes}>
                     <div>
                         <nav className="bg-white shadow-md rounded-lg p-4 mb-6">
-                            <Link to="/"><Button>Home</Button></Link>
+                            <Link to="/" style={{ fontWeight: 'bold' }}><Button>Home</Button></Link>
                             <Link to="/about"><Button>About</Button></Link>
                             <Link to="/contact"><Button>Contact</Button></Link>
                             <Link to="/products"><Button>Products</Button></Link>
